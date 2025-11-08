@@ -1,0 +1,126 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* HSL triples (no commas) so we can adjust alpha with / <a> */
+  --bg: 222 47% 5%;        /* slate-950 */
+  --surface: 222 47% 7%;   /* deeper surface */
+  --muted: 217 19% 72%;    /* brighter for readability in dark */
+  --border: 217 19% 24%;
+  --primary: 221 83% 53%;  /* blue-600 */
+  --primary-fg: 210 40% 98%;
+  --secondary: 262 83% 58%; /* violet-600 */
+  --secondary-fg: 210 40% 98%;
+  --accent: 168 84% 45%;   /* emerald/teal */
+  --accent-fg: 222 47% 5%;
+}
+
+/* Light theme (optional) */
+.light {
+  --bg: 0 0% 100%;
+  --surface: 0 0% 100%;
+  --muted: 215 16% 37%;    /* slightly darker muted for contrast in light */
+  --border: 214 32% 91%;
+  --primary: 221 83% 53%;
+  --primary-fg: 222 47% 5%;
+  --secondary: 262 83% 58%;
+  --secondary-fg: 210 40% 98%;
+  --accent: 168 84% 45%;
+  --accent-fg: 222 47% 5%;
+}
+
+@layer base {
+  html {
+    color-scheme: dark;
+  }
+  body {
+    @apply bg-background text-primaryFg antialiased;
+    background: linear-gradient(180deg, hsl(var(--bg)) 0%, hsl(var(--surface)) 100%);
+  }
+}
+
+@layer components {
+  .container-prose {
+    @apply max-w-6xl mx-auto px-4 md:px-6 lg:px-8;
+  }
+  .card {
+    @apply bg-surface/80 backdrop-blur border border-border/50 rounded-xl shadow-soft transition-all duration-300;
+  }
+  .card:hover {
+    @apply -translate-y-0.5 shadow-lg;
+  }
+  .card:focus-visible {
+    @apply outline-none ring-2 ring-primary/40;
+  }
+  .card-accent {
+    @apply relative p-1 rounded-2xl overflow-hidden;
+  }
+  .card-accent::before {
+    content: "";
+    @apply absolute -top-24 left-1/2 -translate-x-1/2 w-72 h-72 rounded-full blur-3xl opacity-30;
+    background: radial-gradient(circle at center, hsl(var(--primary))/0.35 0%, hsl(var(--secondary))/0.3 35%, hsl(var(--accent))/0.25 65%, transparent 70%);
+  }
+  .card-inner {
+    @apply relative z-10 bg-surface/70 border border-border/40 rounded-2xl;
+  }
+
+  .icon-chip {
+    @apply inline-flex items-center justify-center rounded-xl bg-border/40 text-primaryFg;
+  }
+  .icon-chip-sm { @apply w-8 h-8 text-base; }
+  .icon-chip-md { @apply w-10 h-10 text-lg; }
+  .icon-chip-lg { @apply w-12 h-12 text-xl; }
+  .icon-primary { @apply text-primary; }
+  .icon-secondary { @apply text-secondary; }
+  .icon-accent { @apply text-accent; }
+
+  .item-row {
+    @apply flex items-start gap-3;
+  }
+  .item-row .title { @apply text-primaryFg font-semibold; }
+  .item-row .desc { @apply text-muted text-sm; }
+
+  .grid-auto-sm {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+    gap: 1.5rem;
+  }
+  @screen md {
+    .grid-auto-sm { gap: 2rem; }
+  }
+  .grid-auto-md {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+    gap: 1.5rem;
+  }
+  @screen md {
+    .grid-auto-md { gap: 2rem; }
+  }
+  .grid-auto-lg {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(22rem, 1fr));
+    gap: 1.5rem;
+  }
+  @screen md {
+    .grid-auto-lg { gap: 2rem; }
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center gap-2 rounded-xl bg-primary text-primaryFg px-4 py-2 hover:bg-primary/90 transition-colors;
+  }
+  .btn-secondary {
+    @apply inline-flex items-center gap-2 rounded-xl bg-secondary text-secondaryFg px-4 py-2 hover:bg-secondary/90 transition-colors;
+  }
+}
+
+@keyframes wave {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(15deg); }
+}
+
+.animate-wave {
+  display: inline-block;
+  animation: wave 1.2s infinite;
+  transform-origin: 70% 70%;
+}

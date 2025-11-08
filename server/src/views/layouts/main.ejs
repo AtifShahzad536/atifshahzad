@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= typeof title !== 'undefined' ? title : 'Portfolio Admin' %></title>
+
+  <!-- Favicon -->
+  <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon" />
+
+  <!-- Bootstrap CSS -->
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
+
+  <!-- Font Awesome -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+  />
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="/css/admin.css" />
+
+  <!-- Include extra head partial (meta tags, SEO, etc.) -->
+  <%- include('../partials/head') %>
+
+  <% if (typeof styles !== 'undefined' && styles) { %>
+  <!-- Dynamic Page Styles (Safe Injection) -->
+  <style id="dynamic-styles"></style>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      try {
+        const styleEl = document.getElementById("dynamic-styles");
+        if (styleEl) {
+          // Safely parse the EJS variable to prevent XSS or syntax errors
+          const dynamicStyles = <%- JSON.stringify(styles || '') %>;
+          if (dynamicStyles && typeof dynamicStyles === "string") {
+            styleEl.textContent = dynamicStyles;
+          }
+        }
+      } catch (err) {
+        console.error("Dynamic style injection error:", err);
+      }
+    });
+  </script>
+  <% } %>
+</head>
+
+<body class="admin-dashboard">
+  <div class="d-flex">
+    <!-- Sidebar -->
+    <%- include('../partials/sidebar', { 
+      currentPage: typeof currentPage !== 'undefined' ? currentPage : '',
+      user: typeof user !== 'undefined' ? user : null
+    }) %>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- Navbar -->
+      <%- include('../partials/navbar', { 
+        user: typeof user !== 'undefined' ? user : null 
+      }) %>
+
+      <!-- Page Content -->
+      <main class="container-fluid py-4">
+        <!-- Flash Alerts -->
+        <%- include('../partials/alerts', {
+          success_msg: typeof success_msg !== 'undefined' ? success_msg : null,
+          error_msg: typeof error_msg !== 'undefined' ? error_msg : null,
+          error: typeof error !== 'undefined' ? error : null
+        }) %>
+
+        <!-- Dynamic Page Body -->
+        <%- typeof body !== 'undefined' ? body : '' %>
+      </main>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS Bundle with Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" defer></script>
+
+  <!-- Custom JS -->
+  <script src="/js/admin.js" defer></script>
+
+  <!-- Additional Scripts Partial -->
+  <%- include('../partials/scripts') %>
+</body>
+</html>

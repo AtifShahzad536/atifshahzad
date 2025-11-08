@@ -1,0 +1,182 @@
+<%- include('../layouts/main', { 
+  title: 'Settings | Portfolio Admin', 
+  currentPage: 'settings',
+  scripts: ['/js/settings.js']
+}) %>
+
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+  <h1 class="h2">Settings</h1>
+  <div class="btn-toolbar mb-2 mb-md-0">
+    <button type="button" class="btn btn-sm btn-primary" id="saveSettings">
+      <i class="fas fa-save me-1"></i> Save Changes
+    </button>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-lg-8">
+    <!-- General Settings -->
+    <div class="card mb-4">
+      <div class="card-header">
+        <h5 class="mb-0">General Settings</h5>
+      </div>
+      <div class="card-body">
+        <form id="generalSettingsForm">
+          <div class="mb-3">
+            <label for="siteTitle" class="form-label">Site Title</label>
+            <input type="text" class="form-control" id="siteTitle" name="siteTitle" value="<%= settings.siteTitle || 'My Portfolio' %>" required>
+          </div>
+          <div class="mb-3">
+            <label for="siteDescription" class="form-label">Site Description</label>
+            <textarea class="form-control" id="siteDescription" name="siteDescription" rows="3" required><%= settings.siteDescription || 'A modern portfolio website' %></textarea>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="adminEmail" class="form-label">Admin Email</label>
+                <input type="email" class="form-control" id="adminEmail" name="adminEmail" value="<%= settings.adminEmail || '' %>" required>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="itemsPerPage" class="form-label">Items Per Page</label>
+                <select class="form-select" id="itemsPerPage" name="itemsPerPage" required>
+                  <option value="5" <%= settings.itemsPerPage === 5 ? 'selected' : '' %>>5</option>
+                  <option value="10" <%= !settings.itemsPerPage || settings.itemsPerPage === 10 ? 'selected' : '' %>>10</option>
+                  <option value="25" <%= settings.itemsPerPage === 25 ? 'selected' : '' %>>25</option>
+                  <option value="50" <%= settings.itemsPerPage === 50 ? 'selected' : '' %>>50</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="form-check form-switch mb-3">
+            <input class="form-check-input" type="checkbox" id="maintenanceMode" name="maintenanceMode" <%= settings.maintenanceMode ? 'checked' : '' %>>
+            <label class="form-check-label" for="maintenanceMode">Maintenance Mode</label>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- SEO Settings -->
+    <div class="card mb-4">
+      <div class="card-header">
+        <h5 class="mb-0">SEO Settings</h5>
+      </div>
+      <div class="card-body">
+        <form id="seoSettingsForm">
+          <div class="mb-3">
+            <label for="metaTitle" class="form-label">Default Meta Title</label>
+            <input type="text" class="form-control" id="metaTitle" name="metaTitle" value="<%= settings.metaTitle || '' %>">
+            <div class="form-text">If empty, site title will be used</div>
+          </div>
+          <div class="mb-3">
+            <label for="metaDescription" class="form-label">Default Meta Description</label>
+            <textarea class="form-control" id="metaDescription" name="metaDescription" rows="2"><%= settings.metaDescription || '' %></textarea>
+            <div class="form-text">Recommended: 150-160 characters</div>
+          </div>
+          <div class="mb-3">
+            <label for="metaKeywords" class="form-label">Default Meta Keywords</label>
+            <input type="text" class="form-control" id="metaKeywords" name="metaKeywords" value="<%= settings.metaKeywords || '' %>">
+            <div class="form-text">Comma-separated list of keywords</div>
+          </div>
+          <div class="mb-3">
+            <label for="googleAnalytics" class="form-label">Google Analytics Tracking ID</label>
+            <input type="text" class="form-control" id="googleAnalytics" name="googleAnalytics" value="<%= settings.googleAnalytics || '' %>" placeholder="UA-XXXXX-Y">
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-4">
+    <!-- Social Media -->
+    <div class="card mb-4">
+      <div class="card-header">
+        <h5 class="mb-0">Social Media</h5>
+      </div>
+      <div class="card-body">
+        <form id="socialMediaForm">
+          <div class="mb-3">
+            <label for="facebookUrl" class="form-label">Facebook</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="fab fa-facebook"></i></span>
+              <input type="url" class="form-control" id="facebookUrl" name="facebookUrl" value="<%= settings.socialMedia?.facebook || '' %>" placeholder="https://facebook.com/username">
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="twitterUrl" class="form-label">Twitter</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="fab fa-twitter"></i></span>
+              <input type="url" class="form-control" id="twitterUrl" name="twitterUrl" value="<%= settings.socialMedia?.twitter || '' %>" placeholder="https://twitter.com/username">
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="instagramUrl" class="form-label">Instagram</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="fab fa-instagram"></i></span>
+              <input type="url" class="form-control" id="instagramUrl" name="instagramUrl" value="<%= settings.socialMedia?.instagram || '' %>" placeholder="https://instagram.com/username">
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="linkedinUrl" class="form-label">LinkedIn</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="fab fa-linkedin"></i></span>
+              <input type="url" class="form-control" id="linkedinUrl" name="linkedinUrl" value="<%= settings.socialMedia?.linkedin || '' %>" placeholder="https://linkedin.com/in/username">
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="githubUrl" class="form-label">GitHub</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="fab fa-github"></i></span>
+              <input type="url" class="form-control" id="githubUrl" name="githubUrl" value="<%= settings.socialMedia?.github || '' %>" placeholder="https://github.com/username">
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Backup & Restore -->
+    <div class="card">
+      <div class="card-header">
+        <h5 class="mb-0">Backup & Restore</h5>
+      </div>
+      <div class="card-body">
+        <div class="d-grid gap-2">
+          <button class="btn btn-outline-primary" id="exportData">
+            <i class="fas fa-file-export me-2"></i>Export Data
+          </button>
+          <button class="btn btn-outline-secondary" id="importData">
+            <i class="fas fa-file-import me-2"></i>Import Data
+          </button>
+          <input type="file" id="importFile" class="d-none" accept=".json">
+          <div class="divider">or</div>
+          <button class="btn btn-outline-danger" id="resetSettings">
+            <i class="fas fa-undo me-2"></i>Reset to Defaults
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Reset Confirmation Modal -->
+<div class="modal fade" id="resetModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Reset Settings</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to reset all settings to their default values?</p>
+        <p class="text-danger">This action cannot be undone!</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-danger" id="confirmReset">
+          <i class="fas fa-undo me-1"></i> Reset Settings
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
