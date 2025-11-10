@@ -69,6 +69,9 @@ const Projects = () => {
   };
   
   const closeProjectModal = () => {
+    if (window && window.speechSynthesis) {
+      try { window.speechSynthesis.cancel(); } catch {}
+    }
     setSelectedProject(null);
     document.body.style.overflow = 'auto';
   };
@@ -88,6 +91,8 @@ const Projects = () => {
       );
     }
   };
+  
+  // Voice system removed – no auto TTS on modal open
   
   // Handle keyboard navigation for modal
   useEffect(() => {
@@ -177,22 +182,31 @@ const Projects = () => {
             ))}
           </div>
         ) : (
-          <motion.div 
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-            variants={container}
-            initial="hidden"
-            animate={isInView ? "show" : "hidden"}
-            key={selectedCategory} // Re-animate when category changes
-          >
-            {filteredProjects.map((project, index) => (
-              <ProjectCard 
-                key={project.id || index} 
-                {...project} 
-                index={index} 
-                onClick={() => openProjectModal(project)}
+          <>
+            {filteredProjects.length > 0 && (
+              <FeaturedProjectCard
+                key={`featured-${filteredProjects[0].id || 0}`}
+                {...filteredProjects[0]}
+                onClick={() => openProjectModal(filteredProjects[0])}
               />
-            ))}
-          </motion.div>
+            )}
+            <motion.div 
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-8"
+              variants={container}
+              initial="hidden"
+              animate={isInView ? "show" : "hidden"}
+              key={`${selectedCategory}-grid`}
+            >
+              {filteredProjects.slice(1).map((project, index) => (
+                <ProjectCard 
+                  key={project.id || index} 
+                  {...project} 
+                  index={index + 1} 
+                  onClick={() => openProjectModal(project)}
+                />
+              ))}
+            </motion.div>
+          </>
         )}
         
         {/* Project Modal */}
@@ -300,6 +314,7 @@ const Projects = () => {
                           Live Demo
                         </a>
                       )}
+                      {/* Voice auto-starts on open; no manual button */}
                     </div>
                   </div>
                   
@@ -359,6 +374,60 @@ const Projects = () => {
   );
 };
 
+const FeaturedProjectCard = ({ title, description, github, demo, image, onClick, tags = [], technologies = [], category }) => {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 24 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="relative overflow-hidden rounded-3xl border border-border/30 bg-card/60 backdrop-blur-sm shadow-lg"
+      onClick={onClick}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => e.key === 'Enter' && onClick?.()}
+      aria-label={`View details for ${title} project`}
+    >
+      <div className="relative aspect-[16/7] w-full overflow-hidden">
+        <img src={image} alt={title} className="absolute inset-0 w-full h-full object-cover" />
+        <div className="absolute inset-0 bg-gradient-to-r from-background/90 via-background/50 to-transparent" />
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute -inset-[1px] bg-gradient-to-br from-primary/25 via-transparent to-secondary/25 blur-2xl opacity-50" />
+        </div>
+        <div className="absolute left-6 right-6 top-6 flex items-center gap-2">
+          <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary border border-primary/20">{category || 'Project'}</span>
+          {tags.slice(0, 2).map((t, i) => (
+            <span key={i} className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-muted/40 text-muted-foreground border border-border/40">{t}</span>
+          ))}
+        </div>
+        <div className="absolute left-6 right-6 bottom-6 md:max-w-2xl">
+          <h3 className="text-2xl md:text-3xl font-extrabold text-foreground mb-2">{title}</h3>
+          <p className="text-sm md:text-base text-muted-foreground mb-4 line-clamp-2">{description}</p>
+          <div className="flex items-center gap-2 flex-wrap">
+            {technologies.slice(0, 3).map((tech, i) => (
+              <span key={i} className="text-xs font-medium px-2 py-1 rounded bg-primary/10 text-primary">{tech}</span>
+            ))}
+          </div>
+          <div className="mt-4 flex items-center gap-3">
+            {github && (
+              <a href={github} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-background/80 backdrop-blur border border-border/40 hover:border-primary/40 hover:text-primary transition-colors text-sm font-medium" onClick={(e) => e.stopPropagation()}>
+                <FaGithub /> View Code
+              </a>
+            )}
+            {demo && (
+              <a href={demo} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors text-sm font-medium" onClick={(e) => e.stopPropagation()}>
+                <FaExternalLinkAlt className="text-sm" /> Live Demo
+              </a>
+            )}
+            <button className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-muted/60 hover:bg-muted/80 transition-colors text-sm font-medium" onClick={(e) => { e.stopPropagation(); onClick?.(); }}>
+              Quick View
+            </button>
+          </div>
+        </div>
+      </div>
+    </motion.div>
+  );
+};
+
 const ProjectCard = ({ title, description, github, image, index, onClick, technologies = [], category }) => {
   const isDemoAvailable = !github.includes('github.com');
   const [isHovered, setIsHovered] = useState(false);
@@ -393,7 +462,7 @@ const ProjectCard = ({ title, description, github, image, index, onClick, techno
     if (text.length <= maxLength) return text;
     return text.substring(0, maxLength) + '...';
   };
-  
+
   return (
     <motion.div
       ref={cardRef}
@@ -409,7 +478,7 @@ const ProjectCard = ({ title, description, github, image, index, onClick, techno
           }
         }
       }}
-      className="group relative overflow-hidden rounded-2xl bg-card/50 backdrop-blur-sm border border-border/20 hover:border-primary/30 transition-all duration-500 hover:shadow-xl hover:-translate-y-1"
+      className="group relative overflow-hidden rounded-2xl bg-card/60 backdrop-blur-sm border border-border/20 hover:border-primary/40 transition-all duration-500 hover:shadow-2xl hover:-translate-y-1"
       onMouseMove={handleMouseMove}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={handleMouseLeave}
@@ -485,9 +554,13 @@ const ProjectCard = ({ title, description, github, image, index, onClick, techno
               transition: 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)'
             }}
           />
+          {/* Glow layer */}
+          <div className="absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+            <div className="absolute -inset-[1px] bg-gradient-to-br from-primary/25 via-transparent to-secondary/25 blur-xl" />
+          </div>
           <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
         </div>
-        
+
         {/* Status badge */}
         <motion.div 
           className="absolute top-3 right-3 z-10"
@@ -500,10 +573,40 @@ const ProjectCard = ({ title, description, github, image, index, onClick, techno
               duration: 0.2
             }
           }}
-        >
+          >
           <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary backdrop-blur-sm">
             {category || ['Web', 'Mobile', 'Full Stack'][index % 3]}
           </span>
+        </motion.div>
+
+        {/* Overlay actions */}
+        <motion.div
+          className="absolute top-3 left-3 z-10 flex gap-2"
+          initial={{ opacity: 0, y: -6 }}
+          animate={{ opacity: isHovered ? 1 : 0, y: isHovered ? 0 : -6, transition: { duration: 0.2 } }}
+        >
+          {github && (
+            <a
+              href={github}
+              onClick={(e) => e.stopPropagation()}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs font-medium bg-background/80 backdrop-blur border border-border/40 hover:border-primary/40 hover:text-primary transition-colors"
+              aria-label="View code on GitHub"
+            >
+              <FaGithub /> Code
+            </a>
+          )}
+          {isDemoAvailable && (
+            <a
+              href="#"
+              onClick={(e) => { e.preventDefault(); e.stopPropagation(); onClick?.(); }}
+              className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs font-medium bg-primary/90 text-primary-foreground hover:bg-primary transition-colors"
+              aria-label="Open project details"
+            >
+              <FaExternalLinkAlt className="text-[11px]" /> Live
+            </a>
+          )}
         </motion.div>
       </div>
       

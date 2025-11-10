@@ -9,10 +9,14 @@ const Contact = () => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    message: ""
+    subject: "",
+    message: "",
+    company: ""
   });
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
+  const [copied, setCopied] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -25,19 +29,29 @@ const Contact = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
+    setErrorMsg("");
+    const emailOk = /\S+@\S+\.\S+/.test(formData.email);
+    const nameOk = formData.name.trim().length >= 2;
+    const msgOk = formData.message.trim().length >= 10;
+    if (formData.company) { setIsLoading(false); return; }
+    if (!nameOk || !emailOk || !msgOk) {
+      setIsLoading(false);
+      setErrorMsg(!nameOk ? 'Please enter your name.' : !emailOk ? 'Please enter a valid email.' : 'Message must be at least 10 characters.');
+      return;
+    }
     try {
       const BACKEND = 'https://new-port-backend.vercel.app';
       const res = await fetch(`${BACKEND}/api/contact`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
+        body: JSON.stringify({ name: formData.name, email: formData.email, subject: formData.subject, message: formData.message })
       });
       if (!res.ok) throw new Error('Failed');
       setIsSubmitted(true);
-      setFormData({ name: "", email: "", message: "" });
+      setFormData({ name: "", email: "", subject: "", message: "", company: "" });
       setTimeout(() => setIsSubmitted(false), 5000);
     } catch (err) {
-      // Optionally show an error toast/snackbar; keep silent to preserve UI
+      setErrorMsg('Something went wrong. Please try again later.');
     } finally {
       setIsLoading(false);
     }
@@ -81,16 +95,17 @@ const Contact = () => {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-4">
-            <FiMail className="text-2xl text-primary" />
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-muted/40 border border-border/40 mb-4">
+            <FiMail className="text-primary" />
+            <span className="text-sm tracking-wide text-muted-foreground">Let’s work together</span>
           </div>
-          <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
+          <h2 className="text-4xl md:text-5xl font-extrabold mb-3 bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
             Get In Touch
           </h2>
-          <p className={`text-lg mb-8 max-w-2xl mx-auto ${
+          <p className={`text-base md:text-lg max-w-2xl mx-auto ${
             light ? 'text-gray-600' : 'text-gray-300'
           }`}>
-            Have a project in mind or want to discuss potential opportunities? Feel free to reach out!
+            Have a project in mind or want to discuss opportunities? Send a message—I'll reply quickly.
           </p>
         </motion.div>
 
@@ -101,10 +116,13 @@ const Contact = () => {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className={`rounded-2xl shadow-lg p-6 lg:p-8 mb-8 ${
-              light ? 'bg-white' : 'bg-gray-800'
-            }`}
+            className={`relative overflow-hidden rounded-2xl p-6 lg:p-8 mb-8 border ${
+              light ? 'bg-white/90 border-gray-200' : 'bg-card/80 border-border/30'
+            } backdrop-blur-sm`}
           >
+            <div className="pointer-events-none absolute -inset-1 opacity-0 hover:opacity-100 transition-opacity duration-300">
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-secondary/10 blur-xl" />
+            </div>
             <h3 className={`text-2xl font-bold mb-6 ${
               light ? 'text-gray-900' : 'text-white'
             }`}>
@@ -126,6 +144,20 @@ const Contact = () => {
                   Thank you for your message! I'll get back to you soon.
                 </motion.div>
               )}
+              {!!errorMsg && (
+                <motion.div 
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  className={`mb-6 p-4 rounded-lg ${
+                    light 
+                      ? 'bg-red-50 text-red-700' 
+                      : 'bg-red-900/30 text-red-300'
+                  }`}
+                >
+                  {errorMsg}
+                </motion.div>
+              )}
             </AnimatePresence>
 
             <form onSubmit={handleSubmit} className="space-y-6">
@@ -141,14 +173,17 @@ const Contact = () => {
                   name="name"
                   value={formData.name}
                   onChange={handleChange}
-                  className={`w-full px-4 py-3 rounded-lg focus:ring-2 focus:ring-offset-2 focus:outline-none transition-colors ${
+                  className={`w-full px-4 py-3 rounded-lg focus:ring-2 focus:ring-offset-0 focus:outline-none transition-colors ${
                     light 
-                      ? 'border border-gray-300 bg-white text-gray-900 focus:border-transparent focus:ring-primary/50' 
-                      : 'border border-gray-600 bg-gray-700 text-white focus:border-transparent focus:ring-primary/30'
-                  }`}
+                      ? 'border border-gray-200 bg-white text-gray-900 focus:border-primary/40 focus:ring-primary/30' 
+                      : 'border border-border/40 bg-background/60 text-white focus:border-primary/40 focus:ring-primary/20'
+                  } placeholder:text-muted-foreground/60`}
                   placeholder="Your name"
                   required
                 />
+                {formData.name && formData.name.trim().length < 2 && (
+                  <p className="mt-1 text-xs text-red-500">Please enter at least 2 characters.</p>
+                )}
               </div>
 
               <div>
@@ -163,13 +198,37 @@ const Contact = () => {
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
-                  className={`w-full px-4 py-3 rounded-lg focus:ring-2 focus:ring-offset-2 focus:outline-none transition-colors ${
+                  className={`w-full px-4 py-3 rounded-lg focus:ring-2 focus:ring-offset-0 focus:outline-none transition-colors ${
                     light 
-                      ? 'border border-gray-300 bg-white text-gray-900 focus:border-transparent focus:ring-primary/50' 
-                      : 'border border-gray-600 bg-gray-700 text-white focus:border-transparent focus:ring-primary/30'
-                  }`}
+                      ? 'border border-gray-200 bg-white text-gray-900 focus:border-primary/40 focus:ring-primary/30' 
+                      : 'border border-border/40 bg-background/60 text-white focus:border-primary/40 focus:ring-primary/20'
+                  } placeholder:text-muted-foreground/60`}
                   placeholder="Your email"
                   required
+                />
+                {formData.email && !/\S+@\S+\.\S+/.test(formData.email) && (
+                  <p className="mt-1 text-xs text-red-500">Please provide a valid email address.</p>
+                )}
+              </div>
+
+              <div>
+                <label htmlFor="subject" className={`block text-sm font-medium mb-1 ${
+                  light ? 'text-gray-700' : 'text-gray-300'
+                }`}>
+                  Subject
+                </label>
+                <input
+                  type="text"
+                  id="subject"
+                  name="subject"
+                  value={formData.subject}
+                  onChange={handleChange}
+                  className={`w-full px-4 py-3 rounded-lg focus:ring-2 focus:ring-offset-0 focus:outline-none transition-colors ${
+                    light 
+                      ? 'border border-gray-200 bg-white text-gray-900 focus:border-primary/40 focus:ring-primary/30' 
+                      : 'border border-border/40 bg-background/60 text-white focus:border-primary/40 focus:ring-primary/20'
+                  } placeholder:text-muted-foreground/60`}
+                  placeholder="What’s this about?"
                 />
               </div>
 
@@ -185,21 +244,36 @@ const Contact = () => {
                   rows="5"
                   value={formData.message}
                   onChange={handleChange}
-                  className={`w-full px-4 py-3 rounded-lg focus:ring-2 focus:ring-offset-2 focus:outline-none transition-colors ${
+                  className={`w-full px-4 py-3 rounded-lg focus:ring-2 focus:ring-offset-0 focus:outline-none transition-colors ${
                     light 
-                      ? 'border border-gray-300 bg-white text-gray-900 focus:border-transparent focus:ring-primary/50' 
-                      : 'border border-gray-600 bg-gray-700 text-white focus:border-transparent focus:ring-primary/30'
-                  }`}
+                      ? 'border border-gray-200 bg-white text-gray-900 focus:border-primary/40 focus:ring-primary/30' 
+                      : 'border border-border/40 bg-background/60 text-white focus:border-primary/40 focus:ring-primary/20'
+                  } placeholder:text-muted-foreground/60`}
                   placeholder="Your message"
                   required
                 ></textarea>
+                {formData.message && formData.message.trim().length < 10 && (
+                  <p className="mt-1 text-xs text-red-500">Please write at least 10 characters.</p>
+                )}
               </div>
+
+              <input
+                type="text"
+                name="company"
+                value={formData.company}
+                onChange={handleChange}
+                className="hidden"
+                tabIndex="-1"
+                autoComplete="off"
+              />
 
               <div>
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className={`w-full flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-primary to-secondary text-white font-medium rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-300 ${isLoading ? 'opacity-75 cursor-not-allowed' : ''}`}
+                  className={`w-full flex items-center justify-center gap-2 px-6 py-3 rounded-lg text-white font-medium transition-all duration-300 ${
+                    isLoading ? 'opacity-75 cursor-not-allowed' : ''
+                  } bg-gradient-to-r from-primary to-secondary shadow-md hover:shadow-xl hover:-translate-y-0.5`}
                 >
                   {isLoading ? (
                     <>
@@ -247,12 +321,15 @@ const Contact = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.4, delay: 0.1 * index }}
-                  className={`flex items-start p-4 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 ${
+                  className={`relative overflow-hidden flex items-start p-5 rounded-2xl border transition-all duration-300 ${
                     light 
-                      ? 'bg-white hover:shadow-gray-200' 
-                      : 'bg-gray-800 hover:shadow-gray-700'
+                      ? 'bg-white/90 border-gray-200 hover:border-primary/30' 
+                      : 'bg-card/80 border-border/30 hover:border-primary/40'
                   }`}
                 >
+                  <div className="pointer-events-none absolute -inset-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-secondary/10 blur-xl" />
+                  </div>
                   <div className="flex-shrink-0 mt-1">
                     {method.icon}
                   </div>
@@ -275,6 +352,16 @@ const Contact = () => {
                       >
                         {method.value}
                       </a>
+                      {method.title === 'Email' && (
+                        <button
+                          type="button"
+                          onClick={async () => { try { await navigator.clipboard.writeText(method.value); setCopied(true); setTimeout(() => setCopied(false), 1500); } catch {} }}
+                          className="ml-3 inline-flex items-center px-2 py-1 text-xs rounded-md border border-border/40 hover:border-primary/40"
+                          aria-label="Copy email"
+                        >
+                          {copied ? 'Copied' : 'Copy'}
+                        </button>
+                      )}
                     </div>
                   </div>
                 </motion.div>

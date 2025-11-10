@@ -1,10 +1,12 @@
 import React, { useEffect } from 'react';
 import { ThemeProvider } from './contexts/ThemeContext';
-import { AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { useSmoothScroll } from './hooks/useSmoothScroll';
 import Header from './components/Header';
 import Home from './components/Home';
 import Footer from './components/Footer';
+import ChatBot from './components/ChatBot';
+import Preloader3D from './components/Preloader3D';
 
 const App = () => {
   // Enable smooth scrolling
@@ -28,16 +30,28 @@ const App = () => {
     };
   }, []);
 
+  const [showContent, setShowContent] = React.useState(false);
+
   return (
     <ThemeProvider>
       <AnimatePresence mode="wait">
-        <div className="min-h-screen bg-background text-foreground transition-colors duration-300">
+        {!showContent && (
+          <Preloader3D title="Atif Shahzad" modelUrl="/models/loader.glb" onReady={() => setShowContent(true)} />
+        )}
+
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: showContent ? 1 : 0 }}
+          transition={{ duration: 0.8, ease: 'easeOut' }}
+          className="min-h-screen bg-background text-foreground transition-colors duration-300"
+        >
           <Header />
           <main className="overflow-hidden">
             <Home />
           </main>
           <Footer />
-        </div>
+          <ChatBot />
+        </motion.div>
       </AnimatePresence>
     </ThemeProvider>
   );

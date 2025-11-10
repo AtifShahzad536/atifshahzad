@@ -168,6 +168,47 @@ const About = () => {
             With a keen eye for design and a passion for clean code, I create digital experiences 
             that are both functional and visually stunning.
           </motion.p>
+
+          {/* Highlights */}
+          <motion.div
+            className="mt-6 flex flex-wrap justify-center gap-2"
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+          >
+            <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm bg-muted/50 text-muted-foreground border border-border/40">
+              <span className="h-2 w-2 rounded-full bg-primary" /> Performance-first UIs
+            </span>
+            <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm bg-muted/50 text-muted-foreground border border-border/40">
+              <span className="h-2 w-2 rounded-full bg-secondary" /> Scalable APIs
+            </span>
+            <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm bg-muted/50 text-muted-foreground border border-border/40">
+              <span className="h-2 w-2 rounded-full bg-accent" /> Delightful UX
+            </span>
+          </motion.div>
+
+          {/* Stats */}
+          <motion.div
+            className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4 max-w-4xl mx-auto"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.45 }}
+          >
+            <div className="rounded-2xl border border-border/30 bg-card/70 backdrop-blur-sm p-5 text-left hover:border-primary/30 transition-colors">
+              <p className="text-4xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">3+ </p>
+              <p className="mt-1 text-sm text-muted-foreground">Years building for the web</p>
+            </div>
+            <div className="rounded-2xl border border-border/30 bg-card/70 backdrop-blur-sm p-5 text-left hover:border-primary/30 transition-colors">
+              <p className="text-4xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">20+ </p>
+              <p className="mt-1 text-sm text-muted-foreground">Projects shipped end‑to‑end</p>
+            </div>
+            <div className="rounded-2xl border border-border/30 bg-card/70 backdrop-blur-sm p-5 text-left hover:border-primary/30 transition-colors">
+              <p className="text-4xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">10+ </p>
+              <p className="mt-1 text-sm text-muted-foreground">Core technologies in daily use</p>
+            </div>
+          </motion.div>
         </motion.div>
 
         {/* Tab Navigation */}
@@ -217,34 +258,56 @@ const About = () => {
           {skills[activeTab].tech.map((tech, index) => (
             <motion.div
               key={tech.name}
-              className="bg-card/80 backdrop-blur-sm rounded-xl p-5 border border-border/20 hover:border-primary/30 transition-all duration-300 group"
-              whileHover={{ y: -5, boxShadow: '0 10px 30px -10px rgba(0,0,0,0.1)' }}
+              className="relative overflow-hidden bg-card/70 backdrop-blur-sm rounded-2xl p-5 border border-border/20 hover:border-primary/40 transition-all duration-300 group"
+              whileHover={{ y: -6, scale: 1.01 }}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.4, delay: 0.1 * index }}
             >
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center text-xl">
-                  {tech.icon}
-                </div>
-                <h4 className="font-semibold text-foreground">{tech.name}</h4>
-                <span className="ml-auto text-sm font-medium text-muted-foreground">
-                  {tech.level}%
-                </span>
+              {/* Glow */}
+              <div className="pointer-events-none absolute -inset-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-secondary/10 blur-xl" />
               </div>
-              <div className="w-full bg-muted/30 rounded-full h-2 overflow-hidden">
-                <motion.div
-                  className={`h-full rounded-full`}
-                  style={{
-                    background: `linear-gradient(to right, ${skills[activeTab].color.split(' ')[0].replace('from-', '')}, ${skills[activeTab].color.split(' ')[1].replace('to-', '')})`,
-                    width: 0
-                  }}
-                  initial={{ width: 0 }}
-                  whileInView={{ width: `${tech.level}%` }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 1, delay: 0.1 * index }}
-                />
+
+              <div className="flex items-center gap-4">
+                <div className="relative shrink-0">
+                  <svg width="64" height="64" viewBox="0 0 64 64" className="block">
+                    <circle cx="32" cy="32" r="28" className="stroke-border" strokeWidth="6" fill="none" />
+                    <motion.circle
+                      cx="32" cy="32" r="28" strokeWidth="6" fill="none"
+                      className="stroke-primary"
+                      strokeLinecap="round"
+                      strokeDasharray={`${2*Math.PI*28}`}
+                      strokeDashoffset={`${(1 - tech.level/100)*2*Math.PI*28}`}
+                      initial={{ strokeDashoffset: `${2*Math.PI*28}` }}
+                      whileInView={{ strokeDashoffset: `${(1 - tech.level/100)*2*Math.PI*28}` }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 1.1, delay: 0.1 * index }}
+                    />
+                  </svg>
+                  <div className="absolute inset-0 grid place-items-center text-xs font-bold text-foreground/80">
+                    {tech.level}%
+                  </div>
+                </div>
+
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-2 mb-1">
+                    <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-primary/10 to-secondary/10 grid place-items-center text-lg">
+                      {tech.icon}
+                    </div>
+                    <h4 className="font-semibold text-foreground truncate">{tech.name}</h4>
+                  </div>
+                  <div className="h-1.5 rounded-full bg-muted/30 overflow-hidden">
+                    <motion.div
+                      className="h-full rounded-full bg-gradient-to-r from-primary to-secondary"
+                      initial={{ width: 0 }}
+                      whileInView={{ width: `${tech.level}%` }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.9, delay: 0.12 * index }}
+                    />
+                  </div>
+                </div>
               </div>
             </motion.div>
           ))}

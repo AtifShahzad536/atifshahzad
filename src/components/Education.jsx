@@ -68,73 +68,91 @@ const Education = () => {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-4">
-            <FaUniversity className="text-2xl text-primary" />
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-muted/40 border border-border/40 mb-4">
+            <FaUniversity className="text-primary" />
+            <span className="text-sm tracking-wide text-muted-foreground">Academic Background</span>
           </div>
-          <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
+          <h2 className="text-4xl md:text-5xl font-extrabold mb-3 bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
             Education Journey
           </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            My academic background and continuous learning path in technology and software development.
+          <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto">
+            Degrees and milestones shaping my path in software engineering and technology.
           </p>
         </motion.div>
 
-        <div className="max-w-4xl mx-auto">
-          <div className="relative">
-            {/* Timeline line */}
-            <div className="absolute left-1/2 h-full w-1 bg-gradient-to-b from-primary/20 via-primary/40 to-primary/20 transform -translate-x-1/2 hidden md:block"></div>
-            
-            {/* Education Items */}
-            <div className="space-y-12">
-              {educationData.map((edu, idx) => (
-                <motion.div
-                  key={edu.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: idx * 0.1 }}
-                  className={`relative group ${idx % 2 === 0 ? 'md:pr-8 md:pl-16' : 'md:pl-8 md:pr-16'}`}
-                  onMouseEnter={() => setIsHovered(edu.id)}
-                  onMouseLeave={() => setIsHovered(null)}
-                >
-                  <div className={`relative p-6 md:p-8 rounded-2xl bg-card border border-border/20 shadow-sm transition-all duration-300 ${isHovered === edu.id ? 'shadow-lg -translate-y-1 border-primary/30' : ''}`}>
-                    {/* Timeline dot */}
-                    <div className="absolute -left-2 md:left-1/2 top-8 w-4 h-4 rounded-full bg-primary transform -translate-x-1/2 md:-translate-x-1/2 z-10 flex items-center justify-center">
-                      <div className={`w-2 h-2 rounded-full bg-white transition-all duration-300 ${isHovered === edu.id ? 'scale-150' : ''}`}></div>
-                    </div>
-                    
-                    <div className="flex flex-col md:flex-row items-start gap-6">
-                      <div className="w-16 h-16 rounded-xl bg-primary/10 flex items-center justify-center text-primary flex-shrink-0">
+        <div className="max-w-5xl mx-auto">
+          {/* Horizontal Stepper */}
+          <div className="relative mb-10">
+            <div className="h-1 rounded-full bg-border/60">
+              <div
+                className="h-1 rounded-full bg-primary transition-all duration-500"
+                style={{ width: `${(activeIndex / Math.max(educationData.length - 1, 1)) * 100}%` }}
+              />
+            </div>
+            <div className="mt-4 flex items-start justify-between gap-2">
+              {educationData.map((edu, i) => {
+                const isActive = i === activeIndex;
+                return (
+                  <button
+                    key={edu.id}
+                    onClick={() => setActiveIndex(i)}
+                    className="group flex-1 min-w-0"
+                    aria-label={`Step ${i + 1}: ${edu.title}`}
+                  >
+                    <div className="flex flex-col items-center text-center gap-2">
+                      <div className={`grid place-items-center w-10 h-10 rounded-full border transition-all ${isActive ? 'bg-primary text-primary-foreground border-primary shadow-sm shadow-primary/30' : 'bg-card border-border text-muted-foreground group-hover:border-primary/40'}`}>
                         {edu.icon}
                       </div>
-                      
-                      <div className="flex-1 text-left">
-                        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-2">
-                          <h3 className="text-xl font-bold text-foreground">{edu.title}</h3>
-                          <span className="inline-block px-3 py-1 text-sm font-medium rounded-full bg-primary/10 text-primary">
-                            {edu.year}
-                          </span>
-                        </div>
-                        
-                        <p className="text-muted-foreground font-medium mb-3">{edu.institution}</p>
-                        
-                        <p className="text-muted-foreground mb-4">{edu.description}</p>
-                        
-                        <div className="space-y-2 mt-4">
-                          {edu.achievements.map((achievement, i) => (
-                            <div key={i} className="flex items-start gap-2">
-                              <span className="text-primary mt-1">•</span>
-                              <span className="text-sm text-muted-foreground">{achievement}</span>
-                            </div>
-                          ))}
-                        </div>
+                      <div className="hidden md:block">
+                        <p className={`text-xs font-semibold truncate max-w-[10rem] ${isActive ? 'text-foreground' : 'text-muted-foreground'}`}>{edu.institution}</p>
+                        <p className="text-[10px] text-muted-foreground/80">{edu.year}</p>
                       </div>
                     </div>
-                  </div>
-                </motion.div>
-              ))}
+                  </button>
+                )
+              })}
             </div>
           </div>
+
+          {/* Active Details Card */}
+          {educationData[activeIndex] && (
+            <motion.div
+              key={educationData[activeIndex].id}
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.35 }}
+              className="relative p-6 md:p-8 rounded-2xl bg-card/80 border border-border/30 shadow-sm overflow-hidden"
+              onMouseEnter={() => setIsHovered(educationData[activeIndex].id)}
+              onMouseLeave={() => setIsHovered(null)}
+            >
+              <div className="pointer-events-none absolute -inset-1 rounded-3xl opacity-0 hover:opacity-100 transition-opacity duration-300">
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/15 via-transparent to-secondary/15 blur-xl" />
+              </div>
+              <div className="flex flex-col md:flex-row items-start gap-6 relative">
+                <div className="w-16 h-16 rounded-xl bg-primary/10 flex items-center justify-center text-primary flex-shrink-0 shadow-inner">
+                  {educationData[activeIndex].icon}
+                </div>
+                <div className="flex-1 text-left">
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-2">
+                    <h3 className="text-xl md:text-2xl font-bold text-foreground">{educationData[activeIndex].title}</h3>
+                    <span className="inline-flex items-center gap-2 px-3 py-1 text-xs md:text-sm font-medium rounded-full bg-primary/10 text-primary border border-primary/20">
+                      <FaGraduationCap className="hidden md:inline" /> {educationData[activeIndex].year}
+                    </span>
+                  </div>
+                  <p className="text-muted-foreground font-medium mb-3">{educationData[activeIndex].institution}</p>
+                  <p className="text-muted-foreground/90 mb-4 leading-relaxed">{educationData[activeIndex].description}</p>
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {educationData[activeIndex].achievements.map((achievement, i) => (
+                      <span key={i} className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs md:text-sm bg-muted/50 text-muted-foreground border border-border/40">
+                        <FaAward className="text-[10px] md:text-[12px] text-primary" />
+                        {achievement}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          )}
         </div>
 
         {/* Decorative elements */}
