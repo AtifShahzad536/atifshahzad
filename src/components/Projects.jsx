@@ -387,19 +387,20 @@ const FeaturedProjectCard = ({ title, description, github, demo, image, onClick,
       onKeyDown={(e) => e.key === 'Enter' && onClick?.()}
       aria-label={`View details for ${title} project`}
     >
-      <div className="relative aspect-[16/7] w-full overflow-hidden">
+      <div className="relative aspect-video md:aspect-[16/7] w-full overflow-hidden">
         <img src={image} alt={title} className="absolute inset-0 w-full h-full object-cover" />
-        <div className="absolute inset-0 bg-gradient-to-r from-background/90 via-background/50 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-background/90 via-background/60 to-transparent md:via-background/50" />
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute -inset-[1px] bg-gradient-to-br from-primary/25 via-transparent to-secondary/25 blur-2xl opacity-50" />
         </div>
-        <div className="absolute left-6 right-6 top-6 flex items-center gap-2">
+        <div className="absolute left-4 right-4 md:left-6 md:right-6 top-4 md:top-6 flex items-center gap-2">
           <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary border border-primary/20">{category || 'Project'}</span>
           {tags.slice(0, 2).map((t, i) => (
             <span key={i} className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-muted/40 text-muted-foreground border border-border/40">{t}</span>
           ))}
         </div>
-        <div className="absolute left-6 right-6 bottom-6 md:max-w-2xl">
+        {/* md+ overlay content */}
+        <div className="hidden md:block absolute left-6 right-6 bottom-6 md:max-w-2xl">
           <h3 className="text-2xl md:text-3xl font-extrabold text-foreground mb-2">{title}</h3>
           <p className="text-sm md:text-base text-muted-foreground mb-4 line-clamp-2">{description}</p>
           <div className="flex items-center gap-2 flex-wrap">
@@ -422,6 +423,32 @@ const FeaturedProjectCard = ({ title, description, github, demo, image, onClick,
               Quick View
             </button>
           </div>
+        </div>
+      </div>
+
+      {/* mobile content below image to avoid overlay crowding */}
+      <div className="md:hidden p-4 space-y-3">
+        <h3 className="text-xl font-extrabold text-foreground">{title}</h3>
+        <p className="text-sm text-muted-foreground">{description}</p>
+        <div className="flex items-center gap-2 flex-wrap">
+          {technologies.slice(0, 3).map((tech, i) => (
+            <span key={i} className="text-xs font-medium px-2 py-1 rounded bg-primary/10 text-primary">{tech}</span>
+          ))}
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {github && (
+            <a href={github} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-background/80 backdrop-blur border border-border/40 text-sm font-medium hover:border-primary/40 hover:text-primary" onClick={(e) => e.stopPropagation()}>
+              <FaGithub /> Code
+            </a>
+          )}
+          {demo && (
+            <a href={demo} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90" onClick={(e) => e.stopPropagation()}>
+              <FaExternalLinkAlt className="text-[12px]" /> Live
+            </a>
+          )}
+          <button className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-muted/60 hover:bg-muted/80 text-sm font-medium" onClick={(e) => { e.stopPropagation(); onClick?.(); }}>
+            Quick View
+          </button>
         </div>
       </div>
     </motion.div>
