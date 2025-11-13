@@ -1,29 +1,33 @@
-import { motion } from "framer-motion";
-import {
-  FaReact,
-  FaNodeJs,
-  FaGithub,
-  FaDocker,
-  FaCogs,
-  FaDotCircle,
-  FaRobot,
-} from "react-icons/fa";
-import {
-  SiAxios,
-  SiTailwindcss,
-  SiExpress,
-  SiMongodb,
-  SiMongoose,
-  SiPostman,
-  SiGooglecolab,
-  SiOpenai,
-} from "react-icons/si";
-import * as Fa from 'react-icons/fa'
-import * as Si from 'react-icons/si'
-import * as Io5 from 'react-icons/io5'
-import * as Md from 'react-icons/md'
-import * as Ri from 'react-icons/ri'
-import { useEffect, useState } from 'react'
+import { motion, AnimatePresence } from "framer-motion";
+import { FaReact, FaNodeJs, FaGithub, FaDocker, FaCogs, FaDotCircle, FaRobot } from "react-icons/fa";
+import { SiAxios, SiTailwindcss, SiExpress, SiMongodb, SiMongoose, SiPostman, SiGooglecolab, SiOpenai } from "react-icons/si";
+import * as Fa from 'react-icons/fa';
+import * as Si from 'react-icons/si';
+import * as Io5 from 'react-icons/io5';
+import * as Md from 'react-icons/md';
+import * as Ri from 'react-icons/ri';
+import { useEffect, useState } from 'react';
+
+// Custom card component with hover effect
+const TechCard = ({ tech, index }) => (
+  <motion.div
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.3, delay: index * 0.05 }}
+    className="relative group"
+  >
+    <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-secondary/5 rounded-2xl transform group-hover:scale-105 transition-all duration-300 group-hover:shadow-lg group-hover:shadow-primary/10" />
+    <div className="relative flex flex-col items-center p-6 bg-card/70 backdrop-blur-sm border border-border/30 rounded-2xl h-full transition-all duration-300 group-hover:border-primary/50">
+      <div className="w-14 h-14 flex items-center justify-center rounded-xl bg-gradient-to-br from-primary/10 to-secondary/10 text-primary text-2xl mb-4">
+        {tech.icon}
+      </div>
+      <h4 className="font-medium text-center text-foreground/90">{tech.name}</h4>
+      <span className="mt-2 text-xs font-medium text-primary/80 bg-primary/10 px-3 py-1 rounded-full">
+        {tech.category}
+      </span>
+    </div>
+  </motion.div>
+);
 
 const ToolsTech = () => {
   const BACKEND = 'https://new-port-backend.vercel.app'
@@ -91,98 +95,122 @@ const ToolsTech = () => {
   const rowB = filtered.filter((_, i) => i % 2 === 1)
 
   return (
-    <section className="relative px-6 py-24" id="tools">
-      <div className="absolute inset-0 -z-10 opacity-30">
-        <div className="absolute left-[-10%] top-[10%] h-64 w-64 rounded-full bg-primary/20 blur-3xl" />
-        <div className="absolute right-[-10%] bottom-[10%] h-64 w-64 rounded-full bg-secondary/20 blur-3xl" />
+    <section className="relative py-20 overflow-hidden" id="tools">
+      {/* Background Elements */}
+      <div className="absolute inset-0 -z-10">
+        <div className="absolute inset-0 bg-gradient-to-br from-background via-background/95 to-background/90" />
+        <div className="absolute inset-0 bg-grid-pattern opacity-10" />
+        <div className="absolute left-1/4 top-1/4 w-96 h-96 rounded-full bg-primary/5 blur-3xl" />
+        <div className="absolute right-1/4 bottom-1/4 w-96 h-96 rounded-full bg-secondary/5 blur-3xl" />
       </div>
 
-      <div className="container mx-auto max-w-6xl">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Section Header */}
         <motion.div
-          initial={{ opacity: 0, y: 16 }}
+          initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          className="text-center mb-14"
+          transition={{ duration: 0.6 }}
+          className="text-center mb-16"
         >
-          <div className="inline-flex items-center gap-3 px-5 py-2 rounded-full bg-muted/40 border border-border/40">
-            <FaCogs className="text-primary" />
-            <span className="text-sm tracking-wide text-muted-foreground">Tools & Technologies</span>
-          </div>
-          <h2 className="mt-4 text-4xl md:text-5xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
-            The Stack I Use
-          </h2>
-          <p className="mt-3 text-muted-foreground max-w-2xl mx-auto">
-            A curated set of frameworks, libraries, and platforms I use to build fast, reliable, and beautiful products.
-          </p>
+          <motion.span
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4"
+          >
+            <FaCogs className="text-sm" />
+            TECHNOLOGY STACK
+          </motion.span>
+          
+          <motion.h2 
+            className="text-4xl md:text-5xl lg:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/80 mb-4"
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+          >
+            My Tech Stack
+          </motion.h2>
+          
+          <motion.p 
+            className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed"
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+          >
+            Technologies I'm proficient in and love working with
+          </motion.p>
         </motion.div>
 
-        <div className="flex flex-wrap justify-center gap-2 mb-8">
-          {categories.map((c) => (
+        {/* Category Filter */}
+        <motion.div 
+          className="flex flex-wrap justify-center gap-3 mb-12"
+          initial={{ opacity: 0, y: 10 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+        >
+          {categories.map((category) => (
             <button
-              key={c}
-              onClick={() => setSelected(c)}
-              className={`px-3.5 py-1.5 rounded-full text-sm transition-all border ${selected === c ? 'bg-primary text-primary-foreground border-primary' : 'bg-muted/40 text-muted-foreground border-border hover:bg-muted/60'}`}
+              key={category}
+              onClick={() => setSelected(category)}
+              className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
+                selected === category
+                  ? 'bg-gradient-to-r from-primary to-secondary text-white shadow-lg shadow-primary/20'
+                  : 'bg-card/60 text-muted-foreground hover:bg-card/80 border border-border/40 hover:border-primary/30'
+              }`}
             >
-              {c}
+              {category}
             </button>
           ))}
-        </div>
+        </motion.div>
 
-        <style>{`
-          @keyframes scrollLeft { from { transform: translateX(0); } to { transform: translateX(-50%); } }
-          @keyframes scrollRight { from { transform: translateX(-50%); } to { transform: translateX(0); } }
-        `}</style>
-
-        <div className="space-y-6">
-          <div
-            onMouseEnter={() => setPausedA(true)}
-            onMouseLeave={() => setPausedA(false)}
-            className="relative overflow-hidden rounded-xl border border-border/40 bg-card/40"
+        {/* Tech Grid */}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={selected}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.4 }}
+            className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-5"
           >
-            <div
-              style={{
-                display: 'flex',
-                gap: '12px',
-                width: '200%',
-                animation: `scrollLeft 24s linear infinite`,
-                animationPlayState: pausedA ? 'paused' : 'running'
-              }}
-              className="py-4"
-            >
-              {[...rowA, ...rowA].map((tool, idx) => (
-                <div key={`a-${idx}`} className="flex items-center gap-2 px-4 py-2 rounded-full bg-background/70 backdrop-blur border border-border/40 shadow-sm">
-                  <span className="text-lg text-primary">{tool.icon}</span>
-                  <span className="text-sm font-medium text-foreground/90">{tool.name}</span>
-                </div>
-              ))}
-            </div>
-          </div>
+            {filtered.map((tech, index) => (
+              <TechCard key={`${tech.name}-${index}`} tech={tech} index={index} />
+            ))}
+          </motion.div>
+        </AnimatePresence>
 
-          <div
-            onMouseEnter={() => setPausedB(true)}
-            onMouseLeave={() => setPausedB(false)}
-            className="relative overflow-hidden rounded-xl border border-border/40 bg-card/40"
-          >
-            <div
-              style={{
-                display: 'flex',
-                gap: '12px',
-                width: '200%',
-                animation: `scrollRight 26s linear infinite`,
-                animationPlayState: pausedB ? 'paused' : 'running'
-              }}
-              className="py-4"
+        {/* Stats */}
+        <motion.div 
+          className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-20"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.4 }}
+        >
+          {[
+            { value: '50+', label: 'Technologies' },
+            { value: '100%', label: 'Quality' },
+            { value: '5+', label: 'Years Exp' },
+            { value: '∞', label: 'Passion' },
+          ].map((stat, idx) => (
+            <div 
+              key={idx} 
+              className="bg-card/50 backdrop-blur-sm border border-border/30 rounded-2xl p-6 text-center hover:bg-card/70 transition-colors duration-300"
             >
-              {[...rowB, ...rowB].map((tool, idx) => (
-                <div key={`b-${idx}`} className="flex items-center gap-2 px-4 py-2 rounded-full bg-background/70 backdrop-blur border border-border/40 shadow-sm">
-                  <span className="text-lg text-primary">{tool.icon}</span>
-                  <span className="text-sm font-medium text-foreground/90">{tool.name}</span>
-                </div>
-              ))}
+              <div className="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent mb-2">
+                {stat.value}
+              </div>
+              <div className="text-sm text-muted-foreground font-medium uppercase tracking-wider">
+                {stat.label}
+              </div>
             </div>
-          </div>
-        </div>
+          ))}
+        </motion.div>
       </div>
     </section>
   );

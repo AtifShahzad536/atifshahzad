@@ -1,318 +1,206 @@
 'use client';
 
-import { motion, useInView, useTransform, useViewportScroll } from 'framer-motion';
-import { useRef, useState, useEffect, Suspense, lazy } from 'react';
-import { FaReact, FaNodeJs, FaServer, FaMobileAlt, FaCode, FaDatabase } from 'react-icons/fa';
-import { SiTypescript, SiTailwindcss, SiMongodb, SiNextdotjs, SiGraphql } from 'react-icons/si';
-import { TbBrandFramer, TbCode } from 'react-icons/tb';
-import { CgScreen } from 'react-icons/cg';
-import ThreeScene from "./ThreeScene";
+import { motion } from 'framer-motion';
+import { FaLaptopCode, FaMobileAlt, FaCodeBranch, FaServer, FaDatabase, FaPalette, FaFilePdf } from 'react-icons/fa';
+import { FiCode, FiCpu, FiLayers, FiTrendingUp, FiDownload } from 'react-icons/fi';
+import { SiJavascript, SiReact, SiNodedotjs, SiMongodb, SiExpress } from 'react-icons/si';
+import { FaHtml5, FaCss3Alt, FaGitAlt, FaGithub } from 'react-icons/fa';
+import { TbBrandNextjs } from 'react-icons/tb';
+import { useState } from 'react';
 
-// Lazy load the TechSphere component
-const TechSphere = lazy(() => import('./TechSphere'));
+// PDF resume file
+const RESUME_PDF = '/resume.pdf';
+
+const skills = [
+  { name: 'HTML5', icon: <FaHtml5 className="text-orange-500" />, level: '90%' },
+  { name: 'CSS3', icon: <FaCss3Alt className="text-blue-500" />, level: '85%' },
+  { name: 'JavaScript', icon: <SiJavascript className="text-yellow-400" />, level: '88%' },
+  { name: 'React', icon: <SiReact className="text-blue-400" />, level: '85%' },
+  { name: 'Next.js', icon: <TbBrandNextjs className="text-black dark:text-white" />, level: '80%' },
+  { name: 'Node.js', icon: <SiNodedotjs className="text-green-500" />, level: '82%' },
+  { name: 'Express', icon: <SiExpress className="text-gray-700 dark:text-gray-300" />, level: '80%' },
+  { name: 'MongoDB', icon: <SiMongodb className="text-green-600" />, level: '78%' },
+  { name: 'Git', icon: <FaGitAlt className="text-orange-600" />, level: '85%' },
+  { name: 'GitHub', icon: <FaGithub className="text-gray-700 dark:text-white" />, level: '88%' },
+];
+
+const experiences = [
+  { 
+    text: '3+ years of hands-on experience in full-stack development',
+    icon: <FiCode className="text-lg" />
+  },
+  { 
+    text: 'Proficient in building responsive and interactive web applications',
+    icon: <FiLayers className="text-lg" />
+  },
+  { 
+    text: 'Strong understanding of modern JavaScript frameworks and libraries',
+    icon: <FiCpu className="text-lg" />
+  },
+  { 
+    text: 'Experience with RESTful APIs and database design',
+    icon: <FaDatabase className="text-lg" />
+  },
+  { 
+    text: 'Familiar with version control systems like Git',
+    icon: <FaCodeBranch className="text-lg" />
+  },
+  { 
+    text: 'Knowledge of UI/UX design principles',
+    icon: <FaPalette className="text-lg" />
+  }
+];
 
 const About = () => {
-  const ref = useRef(null);
-  const containerRef = useRef(null);
-  const [isMounted, setIsMounted] = useState(false);
-  const [activeTab, setActiveTab] = useState(0);
-  
-  const isInView = true; // Simplified for now, can be enhanced with IntersectionObserver if needed
-  
-  // Only render Three.js components on client-side
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-  
-  // Client-side only scroll effects
-  const [isClient, setIsClient] = useState(false);
-  const y = useRef(0);
-  const opacity = useRef(1);
-  const scale = useRef(1);
+  const [isDownloading, setIsDownloading] = useState(false);
 
-  useEffect(() => {
-    setIsClient(true);
-    
-    if (typeof window !== 'undefined') {
-      const handleScroll = () => {
-        if (!ref.current) return;
-        
-        const rect = ref.current.getBoundingClientRect();
-        const scrollY = window.scrollY || window.pageYOffset;
-        const windowHeight = window.innerHeight;
-        
-        // Calculate scroll progress (0 to 1)
-        const start = windowHeight * 0.8; // Start animation when 80% of the viewport is scrolled
-        const end = windowHeight * 1.2;   // End animation when 120% of the viewport is scrolled
-        const progress = Math.min(1, Math.max(0, (scrollY - rect.top + start) / (end - start)));
-        
-        // Update motion values
-        y.current = progress * 50;
-        opacity.current = progress < 0.5 ? progress * 2 : 1 - (progress - 0.5) * 0.2;
-        scale.current = 0.95 + (progress * 0.05);
-      };
-      
-      window.addEventListener('scroll', handleScroll, { passive: true });
-      handleScroll(); // Initial call
-      
-      return () => {
-        window.removeEventListener('scroll', handleScroll);
-      };
-    }
-  }, []);
-
-  const tabs = [
-    { id: 'frontend', label: 'Frontend', icon: <CgScreen className="text-primary" /> },
-    { id: 'backend', label: 'Backend', icon: <FaServer className="text-secondary" /> },
-    { id: 'mobile', label: 'Mobile', icon: <FaMobileAlt className="text-purple-500" /> },
-  ];
-
-  const skills = [
-    {
-      title: 'Frontend Development',
-      icon: <CgScreen className="text-4xl" />,
-      description: 'Crafting beautiful, responsive UIs with modern frameworks and libraries.',
-      tech: [
-        { name: 'React', level: 95, icon: <FaReact className="text-[#61DAFB]" /> },
-        { name: 'Next.js', level: 90, icon: <SiNextdotjs /> },
-        { name: 'TypeScript', level: 88, icon: <SiTypescript className="text-[#3178C6]" /> },
-        { name: 'Tailwind', level: 92, icon: <SiTailwindcss className="text-[#38BDF8]" /> },
-        { name: 'Framer Motion', level: 85, icon: <TbBrandFramer /> },
-      ],
-      color: 'from-blue-500 to-cyan-500'
-    },
-    {
-      title: 'Backend Development',
-      icon: <FaServer className="text-4xl" />,
-      description: 'Building scalable and efficient server-side applications and APIs.',
-      tech: [
-        { name: 'Node.js', level: 90, icon: <FaNodeJs className="text-[#68A063]" /> },
-        { name: 'Express', level: 88, icon: <FaCode className="text-gray-600" /> },
-        { name: 'MongoDB', level: 85, icon: <SiMongodb className="text-[#47A248]" /> },
-        { name: 'GraphQL', level: 82, icon: <SiGraphql className="text-[#E10098]" /> },
-        { name: 'PostgreSQL', level: 80, icon: <FaDatabase className="text-blue-600" /> },
-      ],
-      color: 'from-emerald-500 to-green-500'
-    },
-    {
-      title: 'Mobile Development',
-      icon: <FaMobileAlt className="text-4xl" />,
-      description: 'Creating cross-platform mobile applications with native performance.',
-      tech: [
-        { name: 'React Native', level: 90, icon: <FaReact className="text-[#61DAFB]" /> },
-        { name: 'Expo', level: 88, icon: <SiNextdotjs /> },
-        { name: 'Redux', level: 85, icon: <TbCode className="text-purple-500" /> },
-        { name: 'Firebase', level: 83, icon: <FaServer className="text-orange-500" /> },
-        { name: 'UI/UX', level: 87, icon: <CgScreen className="text-pink-500" /> },
-      ],
-      color: 'from-purple-500 to-pink-500'
-    }
-  ];
-
-  // This section intentionally left blank as we already have these declarations at the top
+  const handleDownload = () => {
+    setIsDownloading(true);
+    // Simulate download
+    setTimeout(() => {
+      const link = document.createElement('a');
+      link.href = RESUME_PDF;
+      link.download = 'Atif_Shahzad_Resume.pdf';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      setIsDownloading(false);
+    }, 1000);
+  };
 
   return (
-    <section 
-      id="about" 
-      className="relative py-16 md:py-24 lg:py-32 overflow-hidden"
-      style={{ position: 'relative' }}
-    >
-      <ThreeScene />
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <Suspense fallback={<div className="w-64 h-64 bg-gray-200 dark:bg-gray-800 rounded-full mx-auto" />}>
+    <section id="about" className="py-16 md:py-24">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-16">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">About Me</h2>
+          <div className="w-20 h-1 bg-gradient-to-r from-primary to-secondary mx-auto mb-6"></div>
+          <p className="text-muted-foreground max-w-3xl mx-auto text-lg leading-relaxed text-justify mb-6">
+            I'm a passionate Full Stack Developer with expertise in modern web technologies, dedicated to creating efficient, scalable, and user-friendly applications. With a strong foundation in both frontend and backend development, I bring ideas to life through clean code and innovative solutions. My approach combines technical excellence with a keen eye for design, ensuring every project delivers both functionality and exceptional user experiences.
+          </p>
           <motion.div 
-          className="max-w-4xl mx-auto text-center mb-16"
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ 
-            opacity: isClient ? 1 : 0, 
-            y: isClient ? 0 : 30,
-            scale: isClient ? 1 : 0.95
-          }}
-          transition={{ duration: 0.6 }}
-        >
-          <motion.span 
-            className="inline-flex items-center text-sm font-medium text-primary bg-primary/10 px-4 py-1.5 rounded-full mb-6"
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-          >
-            <span className="relative flex h-2 w-2 mr-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary/75 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
-            </span>
-            About Me
-          </motion.span>
-          
-          <motion.h2 
-            className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent"
+            className="flex flex-col sm:flex-row justify-center gap-6 mt-8"
             initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.2 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
           >
-            Crafting Digital
-            <span className="block bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-              Experiences
-            </span>
-          </motion.h2>
-          
-          <motion.p 
-            className="text-lg text-muted-foreground leading-relaxed max-w-3xl mx-auto"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-          >
-            I specialize in turning complex problems into simple, beautiful, and intuitive solutions. 
-            With a keen eye for design and a passion for clean code, I create digital experiences 
-            that are both functional and visually stunning.
-          </motion.p>
-
-          {/* Highlights */}
-          <motion.div
-            className="mt-6 flex flex-wrap justify-center gap-2"
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.4 }}
-          >
-            <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm bg-muted/50 text-muted-foreground border border-border/40">
-              <span className="h-2 w-2 rounded-full bg-primary" /> Performance-first UIs
-            </span>
-            <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm bg-muted/50 text-muted-foreground border border-border/40">
-              <span className="h-2 w-2 rounded-full bg-secondary" /> Scalable APIs
-            </span>
-            <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm bg-muted/50 text-muted-foreground border border-border/40">
-              <span className="h-2 w-2 rounded-full bg-accent" /> Delightful UX
-            </span>
-          </motion.div>
-
-          {/* Stats */}
-          <motion.div
-            className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4 max-w-4xl mx-auto"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.45 }}
-          >
-            <div className="rounded-2xl border border-border/30 bg-card/70 backdrop-blur-sm p-5 text-left hover:border-primary/30 transition-colors">
-              <p className="text-4xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">3+ </p>
-              <p className="mt-1 text-sm text-muted-foreground">Years building for the web</p>
-            </div>
-            <div className="rounded-2xl border border-border/30 bg-card/70 backdrop-blur-sm p-5 text-left hover:border-primary/30 transition-colors">
-              <p className="text-4xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">20+ </p>
-              <p className="mt-1 text-sm text-muted-foreground">Projects shipped end‑to‑end</p>
-            </div>
-            <div className="rounded-2xl border border-border/30 bg-card/70 backdrop-blur-sm p-5 text-left hover:border-primary/30 transition-colors">
-              <p className="text-4xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">10+ </p>
-              <p className="mt-1 text-sm text-muted-foreground">Core technologies in daily use</p>
-            </div>
-          </motion.div>
-        </motion.div>
-
-        {/* Tab Navigation */}
-        <motion.div 
-          className="flex justify-center mb-12"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.3 }}
-        >
-          <div className="inline-flex bg-card/50 p-1 rounded-2xl border border-border/20 backdrop-blur-sm">
-            {tabs.map((tab, index) => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(index)}
-                className={`px-6 py-3 text-sm font-medium rounded-xl transition-all duration-300 relative overflow-hidden group ${
-                  activeTab === index 
-                    ? 'text-primary' 
-                    : 'text-muted-foreground hover:text-foreground'
+            <motion.button
+              whileHover={{ 
+                scale: 1.05,
+                background: 'linear-gradient(135deg, var(--primary), var(--secondary))',
+                boxShadow: '0 10px 25px -5px rgba(99, 102, 241, 0.4), 0 10px 10px -5px rgba(99, 102, 241, 0.2)'
+              }}
+              whileTap={{ scale: 0.98 }}
+              onClick={handleDownload}
+              disabled={isDownloading}
+              className={`group relative flex items-center justify-center gap-3 px-8 py-3.5 font-medium transition-all duration-300 overflow-hidden
+                ${isDownloading 
+                  ? 'bg-gray-200 dark:bg-gray-700 text-gray-500 cursor-not-allowed' 
+                  : 'bg-gradient-to-r from-primary to-secondary text-white hover:shadow-xl'
                 }`}
-              >
-                <span className="relative z-10 flex items-center gap-2">
-                  <span className="text-lg">{tab.icon}</span>
-                  {tab.label}
-                </span>
-                <span className={`absolute inset-0 rounded-xl transition-all duration-300 ${
-                  activeTab === index 
-                    ? 'bg-primary/10 shadow-sm' 
-                    : 'bg-transparent group-hover:bg-background/50'
-                }`}></span>
-                <span className={`absolute bottom-0 left-1/2 w-1/2 h-0.5 bg-primary transform -translate-x-1/2 transition-all duration-300 ${
-                  activeTab === index ? 'scale-100' : 'scale-0'
-                }`}></span>
-              </button>
-            ))}
-          </div>
-        </motion.div>
-
-        {/* Skills Grid */}
-        <motion.div 
-          className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto"
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.4 }}
-        >
-          {skills[activeTab].tech.map((tech, index) => (
-            <motion.div
-              key={tech.name}
-              className="relative overflow-hidden bg-card/70 backdrop-blur-sm rounded-2xl p-5 border border-border/20 hover:border-primary/40 transition-all duration-300 group"
-              whileHover={{ y: -6, scale: 1.01 }}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.4, delay: 0.1 * index }}
+              style={{
+                clipPath: 'polygon(0 0, 100% 0, 100% 80%, 95% 100%, 5% 100%, 0 80%)',
+                borderRadius: '12px 12px 8px 8px',
+              }}
             >
-              {/* Glow */}
-              <div className="pointer-events-none absolute -inset-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-secondary/10 blur-xl" />
-              </div>
-
-              <div className="flex items-center gap-4">
-                <div className="relative shrink-0">
-                  <svg width="64" height="64" viewBox="0 0 64 64" className="block">
-                    <circle cx="32" cy="32" r="28" className="stroke-border" strokeWidth="6" fill="none" />
-                    <motion.circle
-                      cx="32" cy="32" r="28" strokeWidth="6" fill="none"
-                      className="stroke-primary"
-                      strokeLinecap="round"
-                      strokeDasharray={`${2*Math.PI*28}`}
-                      strokeDashoffset={`${(1 - tech.level/100)*2*Math.PI*28}`}
-                      initial={{ strokeDashoffset: `${2*Math.PI*28}` }}
-                      whileInView={{ strokeDashoffset: `${(1 - tech.level/100)*2*Math.PI*28}` }}
-                      viewport={{ once: true }}
-                      transition={{ duration: 1.1, delay: 0.1 * index }}
-                    />
-                  </svg>
-                  <div className="absolute inset-0 grid place-items-center text-xs font-bold text-foreground/80">
-                    {tech.level}%
-                  </div>
-                </div>
-
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-2 mb-1">
-                    <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-primary/10 to-secondary/10 grid place-items-center text-lg">
-                      {tech.icon}
-                    </div>
-                    <h4 className="font-semibold text-foreground truncate">{tech.name}</h4>
-                  </div>
-                  <div className="h-1.5 rounded-full bg-muted/30 overflow-hidden">
-                    <motion.div
-                      className="h-full rounded-full bg-gradient-to-r from-primary to-secondary"
-                      initial={{ width: 0 }}
-                      whileInView={{ width: `${tech.level}%` }}
-                      viewport={{ once: true }}
-                      transition={{ duration: 0.9, delay: 0.12 * index }}
-                    />
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          ))}
+              <span className="absolute inset-0 bg-gradient-to-r from-primary/80 to-secondary/80 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
+              <span className="relative z-10 flex items-center gap-2">
+                {isDownloading ? (
+                  <>
+                    <svg className="animate-spin h-5 w-5 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <span>Downloading...</span>
+                  </>
+                ) : (
+                  <>
+                    <FiDownload className="text-lg group-hover:animate-bounce" />
+                    <span>Download Resume</span>
+                  </>
+                )}
+              </span>
+              <span className="absolute -bottom-1 left-1/2 w-3/4 h-1 bg-white/30 rounded-full transform -translate-x-1/2 group-hover:scale-x-0 transition-transform duration-300"></span>
+            </motion.button>
+            
+            <motion.a
+              whileHover={{ 
+                scale: 1.05,
+                boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)'
+              }}
+              whileTap={{ scale: 0.98 }}
+              href={RESUME_PDF}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group relative flex items-center justify-center gap-3 px-8 py-3.5 bg-card border-2 border-primary/20 text-foreground font-medium rounded-xl hover:bg-card/90 transition-all duration-300 overflow-hidden"
+              style={{
+                clipPath: 'polygon(5% 0, 100% 0, 100% 80%, 95% 100%, 0 100%, 0 20%)',
+                borderRadius: '12px 12px 8px 8px',
+              }}
+            >
+              <span className="absolute inset-0 bg-gradient-to-r from-primary/5 to-secondary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
+              <FaFilePdf className="text-xl text-red-500 group-hover:animate-pulse" />
+              <span className="relative z-10">View Resume</span>
+              <span className="absolute -bottom-1 left-1/2 w-3/4 h-1 bg-primary/20 rounded-full transform -translate-x-1/2 group-hover:scale-x-0 transition-transform duration-300"></span>
+            </motion.a>
           </motion.div>
-        </Suspense>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+          {/* Left Column - Experience */}
+          <div>
+            <h3 className="text-2xl font-semibold mb-6 flex items-center justify-center lg:justify-start">
+              <FaLaptopCode className="text-2xl text-primary mr-3" />
+              My Experience
+            </h3>
+            <ul className="space-y-5">
+              {experiences.map((item, index) => (
+                <motion.li 
+                  key={index}
+                  className="flex items-start"
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                >
+                  <span className="text-white bg-gradient-to-br from-primary to-secondary p-2.5 rounded-xl mr-4 flex-shrink-0 transform transition-transform hover:scale-110">
+                    {item.icon}
+                  </span>
+                  <span className="text-muted-foreground text-base text-justify">{item.text}</span>
+                </motion.li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Right Column - Skills */}
+          <div>
+            <h3 className="text-2xl font-semibold mb-6 flex items-center justify-center lg:justify-start">
+              <FaServer className="text-primary mr-2" />
+              My Skills
+            </h3>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+              {skills.map((skill, index) => (
+                <motion.div
+                  key={skill.name}
+                  className="bg-card p-4 rounded-lg border border-border/30 flex flex-col items-center text-center"
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: index * 0.05 }}
+                >
+                  <div className="text-3xl mb-2">{skill.icon}</div>
+                  <h4 className="font-medium mb-1">{skill.name}</h4>
+                  <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 mt-2">
+                    <div 
+                      className="bg-gradient-to-r from-primary to-secondary h-2 rounded-full" 
+                      style={{ width: skill.level }}
+                    ></div>
+                  </div>
+                  <span className="text-xs text-muted-foreground mt-1">{skill.level}</span>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
     </section>
   );

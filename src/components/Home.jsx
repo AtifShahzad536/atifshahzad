@@ -5,7 +5,6 @@ const About = lazy(() => import("./About"));
 const Projects = lazy(() => import("./Projects"));
 const ToolsTech = lazy(() => import("./ToolsAndTech"));
 const Education = lazy(() => import("./Education"));
-const ResumeViewer = lazy(() => import("./Resume"));
 const Contact = lazy(() => import("./Contacts"));
 
 const Home = () => {
@@ -17,7 +16,6 @@ const Home = () => {
         <Projects />
         <ToolsTech />
         <Education />
-        <ResumeViewer />
         <Contact />
       </Suspense>
     </>

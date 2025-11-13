@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useSmoothScroll } from './hooks/useSmoothScroll';
@@ -7,52 +7,59 @@ import Home from './components/Home';
 import Footer from './components/Footer';
 import ChatBot from './components/ChatBot';
 import Preloader3D from './components/Preloader3D';
+import Background from './components/Background';
 
 const App = () => {
-  // Enable smooth scrolling
+  const [isLoading, setIsLoading] = useState(true);
   useSmoothScroll();
 
-  // Add scroll-based animations
   useEffect(() => {
-    // Add scroll-based class to body for scroll effects
     const handleScroll = () => {
       document.body.setAttribute('data-scroll', window.scrollY > 100 ? 'scrolled' : '');
     };
 
-    // Initial check
     handleScroll();
-    
-    // Add scroll event listener
     window.addEventListener('scroll', handleScroll, { passive: true });
-    
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const [showContent, setShowContent] = React.useState(false);
+  const handleLoadingComplete = () => {
+    // This will be called when the preloader's exit animation is complete
+    setIsLoading(false);
+  };
 
   return (
     <ThemeProvider>
-      <AnimatePresence mode="wait">
-        {!showContent && (
-          <Preloader3D title="Atif Shahzad" modelUrl="/models/loader.glb" onReady={() => setShowContent(true)} />
-        )}
-
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: showContent ? 1 : 0 }}
-          transition={{ duration: 0.8, ease: 'easeOut' }}
-          className="min-h-screen bg-background text-foreground transition-colors duration-300"
-        >
-          <Header />
-          <main className="overflow-hidden">
-            <Home />
-          </main>
-          <Footer />
-          <ChatBot />
-        </motion.div>
-      </AnimatePresence>
+      <Background>
+        <AnimatePresence mode="wait">
+          {isLoading ? (
+            <Preloader3D 
+              title="Atif Shahzad"
+              onReady={() => {
+                // This will be called when loading reaches 100%
+                // The actual unmount will happen after the exit animation
+              }}
+              onFinished={handleLoadingComplete}
+            />
+          ) : (
+            <motion.div
+              key="app-content"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.8, ease: "easeInOut" }}
+              className="relative z-10"
+            >
+              <Header />
+              <main>
+                <Home />
+              </main>
+              <Footer />
+              <ChatBot />
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </Background>
     </ThemeProvider>
   );
 };

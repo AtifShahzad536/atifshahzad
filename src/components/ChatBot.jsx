@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import ThreeBackground from './ThreeBackground'
 import ChatIcon3D from './ChatIcon3D'
 
 const BACKEND = 'https://new-port-backend.vercel.app'
@@ -104,9 +103,6 @@ export default function ChatBot () {
             className="fixed z-50 top-20 right-6 w-[90vw] max-w-md rounded-2xl border border-border bg-card shadow-2xl overflow-hidden flex flex-col backdrop-blur-md"
             style={{ maxHeight: 'calc(100vh - 8rem)' }}
           >
-            {/* Subtle 3D background inside panel */}
-            <ThreeBackground particleCount={900} particleSpeed={0.2} particleColor={'#6366f1'} enableOrb={false} style={{ opacity: 0.12 }} />
-
             <div className="px-4 py-3 border-b bg-gradient-to-r from-primary/10 via-transparent to-secondary/10 flex items-center justify-between">
               <div className="font-semibold flex items-center gap-2">
                 <span className="inline-flex w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />

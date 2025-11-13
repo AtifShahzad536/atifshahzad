@@ -2,7 +2,7 @@ import { motion, useInView, useScroll, useTransform } from 'framer-motion';
 import { FaGithub, FaLinkedin, FaTwitter, FaHandPaper } from 'react-icons/fa';
 import { useRef, useEffect, useState } from 'react';
 import { TypeAnimation } from 'react-type-animation';
-import ThreeScene from './ThreeScene';
+
 import AtifImage from '../assets/atif.jpeg';
 
 const Hero = () => {
@@ -65,17 +65,33 @@ const Hero = () => {
   };
 
   const buttonVariants = {
-    initial: { scale: 1 },
-    hover: {
-      scale: 1.05,
-      boxShadow: '0 10px 30px -10px rgba(0, 118, 255, 0.5)',
-      transition: {
-        type: 'spring',
-        stiffness: 400,
-        damping: 10,
-      },
+    initial: { 
+      '--btn-rotate': '0deg',
+      '--btn-scale': 1,
+      '--btn-bg-pos': '0% 50%',
+      scale: 1,
+      backgroundSize: '200% 200%',
+      backgroundPosition: 'var(--btn-bg-pos)'
     },
-    tap: { scale: 0.98 },
+    hover: {
+      '--btn-rotate': '2deg',
+      '--btn-scale': 1.02,
+      '--btn-bg-pos': '100% 50%',
+      scale: 'var(--btn-scale)',
+      rotate: 'var(--btn-rotate)',
+      transition: {
+        duration: 0.4,
+        ease: [0.25, 0.1, 0.25, 1],
+        backgroundPosition: {
+          duration: 0.8,
+          ease: 'easeInOut'
+        }
+      }
+    },
+    tap: { 
+      scale: 0.96,
+      '--btn-rotate': '0deg'
+    },
   };
 
   // Wave animation
@@ -119,24 +135,11 @@ const Hero = () => {
     <section 
       ref={ref} 
       id="home" 
-      className="relative min-h-screen flex items-center justify-center overflow-hidden pt-10 px-4 sm:px-6 lg:px-8"
+      className="relative min-h-screen flex items-center justify-center pt-16 md:pt-10 px-4 sm:px-6 lg:px-8"
     >
-      {/* Background elements with Three.js */}
-      <motion.div 
-        className="absolute inset-0 z-0"
-        style={{ y: yBg }}
-      >
-        <div className="absolute inset-0 bg-gradient-to-b from-background to-background/80" />
-        <div className="absolute inset-0 opacity-20" style={{
-          backgroundImage: 'radial-gradient(circle at 1px 1px, hsl(var(--foreground)/0.1) 1px, transparent 0)',
-          backgroundSize: '40px 40px'
-        }}></div>
-        <ThreeScene />
-      </motion.div>
-
-      <div className="container relative z-10 py-12 sm:py-20 md:py-32">
+      <div className="container relative z-10 py-8 sm:py-20 md:py-32">
         <motion.div 
-          className="flex flex-col-reverse lg:grid lg:grid-cols-2 gap-8 md:gap-12 items-center"
+          className="flex flex-col-reverse lg:grid lg:grid-cols-2 gap-12 md:gap-16 items-center"
           variants={container}
           initial="hidden"
           animate={isInView ? "show" : "hidden"}
@@ -150,49 +153,38 @@ const Hero = () => {
               </div>
             </motion.div>
 
-            <motion.h1 
-              variants={item} 
-              className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6"
-            >
-              <div className="inline-flex flex-wrap items-center">
-                <span className="text-muted-foreground">Hi, I'm </span>
-                <motion.span 
-                  className="ml-2 text-yellow-300 inline-block"
-                  variants={waveAnimation}
-                  initial="initial"
-                  animate="animate"
-                  whileHover="hover"
-                >
-                  <FaHandPaper className="text-3xl md:text-4xl inline" />
-                </motion.span>
+            <motion.div variants={item} className="mb-4 md:mb-6">
+              <div className="flex flex-col sm:flex-row items-center justify-center sm:justify-start">
+                <div className="text-center sm:text-left">
+                  <span className="text-base md:text-lg text-muted-foreground">Hi, I'm </span>
+                  {mounted && (
+                    <TypeAnimation
+                      sequence={[
+                        'Atif Shahzad',
+                        2000,
+                        'Full Stack Developer',
+                        2000,
+                      ]}
+                      wrapper="span"
+                      speed={50}
+                      className="text-base md:text-lg font-medium bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary"
+                      repeat={Infinity}
+                    />
+                  )}
+                </div>
               </div>
-              {mounted && (
-                <TypeAnimation
-                  sequence={[
-                    'Atif Shahzad',
-                    1000,
-                    'A Full Stack Developer',
-                    1000,
-                  ]}
-                  wrapper="div"
-                  cursor={true}
-                  repeat={Infinity}
-                  className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary block mt-2"
-                  style={{ display: 'inline-block' }}
-                />
-              )}
-            </motion.h1>
+            </motion.div>
 
             <motion.p 
               variants={item}
-              className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto lg:mx-0 mb-8 leading-relaxed"
+              className="text-base sm:text-lg md:text-lg text-muted-foreground max-w-2xl mx-auto lg:mx-0 mb-6 md:mb-8 leading-relaxed text-justify"
             >
-              I build exceptional digital experiences with modern web technologies and clean, efficient code.
+              I'm a passionate Full Stack Developer dedicated to crafting exceptional digital experiences. With expertise in modern web technologies, I build responsive, accessible, and high-performance applications that solve real-world problems.
             </motion.p>
 
             <motion.div 
               variants={item}
-              className="flex flex-wrap gap-4 justify-center lg:justify-start mb-12"
+              className="flex flex-wrap gap-4 justify-center lg:justify-start mb-8 md:mb-12"
             >
               <motion.div className="relative group">
                 <motion.div 
@@ -204,24 +196,83 @@ const Hero = () => {
                   }}
                   aria-hidden="true"
                 />
-                <motion.a
-                  href="#contact"
-                  variants={buttonVariants}
-                  initial="initial"
-                  whileHover="hover"
-                  whileTap="tap"
-                  className="relative px-8 py-4 rounded-lg bg-primary text-primary-foreground font-medium text-lg flex items-center gap-2 group z-10"
-                >
-                  Hire Me
-                  <svg 
-                    className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" 
-                    fill="none" 
-                    viewBox="0 0 24 24" 
-                    stroke="currentColor"
+                <motion.div className="relative group">
+                  <motion.div 
+                    className="absolute inset-0 bg-gradient-to-r from-primary to-secondary rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                    style={{
+                      filter: 'blur(8px)',
+                      zIndex: -1,
+                      transform: 'translateZ(0)'
+                    }}
+                  />
+                  <motion.div 
+                    className="relative group"
+                    style={{
+                      perspective: '1000px',
+                      transformStyle: 'preserve-3d'
+                    }}
                   >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                  </svg>
-                </motion.a>
+                    <motion.div 
+                      className="absolute inset-0 rounded-lg bg-gradient-to-r from-primary/10 via-primary/5 to-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                      style={{
+                        filter: 'blur(12px)',
+                        transform: 'translateZ(-10px)'
+                      }}
+                    />
+                    <motion.a
+                      href="#contact"
+                      variants={buttonVariants}
+                      initial="initial"
+                      whileHover="hover"
+                      whileTap="tap"
+                      className="relative px-8 py-3 text-sm font-medium tracking-wide text-primary-foreground flex items-center justify-center gap-2 overflow-hidden group/btn h-12 w-40"
+                      style={{
+                        background: 'linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary)) 45%, hsl(var(--primary)/0.9) 55%, hsl(var(--primary)) 100%)',
+                        backgroundSize: '250% 250%',
+                        boxShadow: '0 4px 20px -5px rgba(var(--primary-rgb), 0.3)',
+                        transform: 'translateZ(0)',
+                        borderRadius: '12px',
+                        borderTopLeftRadius: '4px',
+                        borderBottomRightRadius: '4px',
+                      }}
+                    >
+                      <span className="relative z-10 flex items-center gap-2">
+                        <span className="relative">Hire Me</span>
+                        <motion.span
+                          className="inline-flex items-center justify-center"
+                          animate={{
+                            x: [0, 4, 0],
+                            scale: [1, 1.2, 1]
+                          }}
+                          transition={{
+                            duration: 2,
+                            repeat: Infinity,
+                            repeatType: 'loop',
+                            ease: 'easeInOut',
+                          }}
+                        >
+                          <svg 
+                            className="w-4 h-4" 
+                            fill="none" 
+                            viewBox="0 0 24 24" 
+                            stroke="currentColor"
+                            strokeWidth={2.5}
+                          >
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                          </svg>
+                        </motion.span>
+                      </span>
+                      <span className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent opacity-0 group-hover/btn:opacity-100 transition-opacity duration-300" />
+                      <span className="absolute inset-0 border-2 border-white/10 group-hover:border-white/20 transition-all duration-300"
+                        style={{
+                          borderRadius: '12px',
+                          borderTopLeftRadius: '4px',
+                          borderBottomRightRadius: '4px',
+                        }}
+                      />
+                    </motion.a>
+                  </motion.div>
+                </motion.div>
               </motion.div>
             </motion.div>
 
@@ -263,7 +314,7 @@ const Hero = () => {
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
           >
-            <div className="relative z-10 w-56 h-56 sm:w-64 sm:h-64 md:w-80 md:h-80 lg:w-96 lg:h-96 mx-auto">
+            <div className="relative z-10 w-48 h-48 sm:w-64 sm:h-64 md:w-80 md:h-80 lg:w-96 lg:h-96 mx-auto">
               <div className="absolute inset-0 rounded-full bg-gradient-to-br from-primary/20 via-secondary/20 to-accent/20 blur-2xl animate-blob" />
               <div className="absolute inset-0 rounded-full bg-gradient-to-br from-primary/10 via-secondary/10 to-accent/10 animate-blob animation-delay-2000" />
               <div className="absolute inset-0 rounded-full bg-gradient-to-br from-primary/5 via-secondary/5 to-accent/5 animate-blob animation-delay-4000" />
@@ -284,31 +335,6 @@ const Hero = () => {
         </motion.div>
       </div>
 
-      <motion.div 
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center z-10"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ 
-          opacity: isInView ? 1 : 0, 
-          y: isInView ? 0 : 20 
-        }}
-        transition={{ delay: 1.5 }}
-      >
-        <div className="text-sm text-muted-foreground mb-2">Scroll down</div>
-        <div className="w-6 h-10 border-2 border-foreground/30 rounded-full flex justify-center p-1">
-          <motion.div 
-            className="w-1 h-2 bg-foreground/70 rounded-full"
-            animate={{ 
-              y: [0, 10, 0],
-              opacity: [0.6, 1, 0.6]
-            }}
-            transition={{ 
-              repeat: Infinity, 
-              duration: 1.8,
-              ease: "easeInOut"
-            }}
-          />
-        </div>
-      </motion.div>
     </section>
   );
 };

@@ -1,7 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { FaUniversity, FaGraduationCap, FaAward, FaBookOpen } from "react-icons/fa";
 import { useState, useEffect } from "react";
-import ThreeScene from "./ThreeScene";
 
 const Education = () => {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -59,7 +58,7 @@ const Education = () => {
 
   return (
     <section id="education" className="relative py-16 md:py-24 lg:py-32 overflow-hidden">
-      <ThreeScene />
+      {/* <ThreeScene /> */}
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
