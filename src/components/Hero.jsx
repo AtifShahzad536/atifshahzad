@@ -1,163 +1,81 @@
-import { motion, useScroll, useTransform, useInView, AnimatePresence } from 'framer-motion';
+import { motion, useInView, useScroll, useTransform } from 'framer-motion';
 import { FaGithub, FaLinkedin, FaTwitter, FaHandPaper } from 'react-icons/fa';
-import { BsPersonWorkspace, BsArrowDown, BsArrowRight } from 'react-icons/bs';
-import { MdOutlineEmail, MdOutlineWorkOutline } from 'react-icons/md';
-import { SiLeetcode } from 'react-icons/si';
-import { useRef, useState,React } from 'react';
+import { useRef, useEffect, useState } from 'react';
+import { TypeAnimation } from 'react-type-animation';
 import ThreeScene from './ThreeScene';
 import AtifImage from '../assets/atif.jpeg';
 
 const Hero = () => {
   const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, amount: 0.3 });
+  const [mounted, setMounted] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
-  const isInView = useInView(ref, { once: true });
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start start", "end start"]
   });
 
-  // Text animation variants
+  const yBg = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const container = {
     hidden: { opacity: 0 },
     show: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.05,
+        staggerChildren: 0.1,
         delayChildren: 0.3,
-        when: "beforeChildren",
       },
     },
   };
 
   const item = {
-    hidden: { 
-      y: 30, 
-      opacity: 0,
-      filter: 'blur(5px)'
-    },
+    hidden: { y: 20, opacity: 0 },
     show: {
       y: 0,
       opacity: 1,
-      filter: 'blur(0px)',
       transition: {
         type: 'spring',
         stiffness: 100,
-        damping: 15,
-        mass: 0.5,
-      },
-    },
-  };
-  
-  // Text reveal animation
-  const textReveal = {
-    hidden: { opacity: 0, y: 20 },
-    visible: (i = 0) => ({
-      opacity: 1,
-      y: 0,
-      transition: {
-        delay: 0.5 + (i * 0.05),
-        duration: 0.8,
-        ease: [0.2, 0.65, 0.3, 0.9],
-      },
-    }),
-  };
-  
-  // Staggered text animation with proper spacing
-  const staggeredText = (text, className = '') => {
-    return (
-      <span className={`inline-block ${className}`}>
-        {text.split(' ').map((word, i, arr) => [
-          <motion.span 
-            key={`word-${i}`}
-            className="inline-block"
-            variants={textReveal}
-            custom={i}
-            initial="hidden"
-            animate={isInView ? "visible" : "hidden"}
-          >
-            {word}
-          </motion.span>,
-          i < arr.length - 1 ? ' ' : null
-        ])}
-      </span>
-    );
-  };
-  
-  // Gradient text animation
-  const gradientText = {
-    hidden: { 
-      backgroundPosition: '0% 50%',
-      opacity: 0,
-    },
-    visible: {
-      backgroundPosition: '100% 50%',
-      opacity: 1,
-      transition: {
-        backgroundPosition: {
-          duration: 3,
-          ease: 'linear',
-          repeat: Infinity,
-          repeatType: 'reverse',
-        },
-        opacity: { duration: 0.8, delay: 0.8 },
+        damping: 12,
       },
     },
   };
 
-  // Button animation variants with theme support
-  const buttonVariants = {
-    initial: { 
-      y: 0,
+  const socialIcon = {
+    hidden: { scale: 0, opacity: 0 },
+    show: (i) => ({
       scale: 1,
-      boxShadow: '0 2px 8px -2px rgba(0, 0, 0, 0.1)'
-    },
-    primary: {
-      background: 'linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%)',
-      color: 'white',
-      border: 'none',
-      '--button-text': 'white',
-      '--button-hover': 'rgba(255, 255, 255, 0.1)'
-    },
-    secondary: {
-      background: 'transparent',
-      color: 'var(--color-primary)',
-      border: '2px solid var(--color-primary)',
-      '--button-text': 'var(--color-primary)',
-      '--button-hover': 'rgba(var(--color-primary-rgb), 0.1)'
-    },
-    hover: { 
-      y: -3,
-      scale: 1.02,
-      boxShadow: '0 6px 16px -2px rgba(0, 0, 0, 0.1)',
-      background: [
-        'linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%)',
-        'linear-gradient(135deg, var(--color-secondary) 0%, var(--color-primary) 100%)',
-        'linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%)'
-      ],
+      opacity: 1,
       transition: {
-        y: { type: 'spring', stiffness: 400, damping: 15 },
-        scale: { type: 'spring', stiffness: 300 },
-        background: { duration: 3, repeat: Infinity, ease: 'linear' },
-        boxShadow: { duration: 0.3 }
-      }
-    },
-    tap: { 
-      y: 1,
-      scale: 0.98,
-      boxShadow: '0 1px 4px -1px rgba(0, 0, 0, 0.1)',
-      transition: { 
-        duration: 0.15,
-        ease: 'easeOut'
-      } 
-    },
-    secondaryHover: {
-      background: 'rgba(var(--color-primary-rgb), 0.1)',
-      color: 'var(--color-primary)',
-      borderColor: 'var(--color-primary)',
+        delay: 0.5 + i * 0.1,
+        type: 'spring',
+        stiffness: 100,
+        damping: 10,
+      },
+    }),
+    hover: {
       y: -3,
-      scale: 1.02,
-      boxShadow: '0 4px 16px -2px rgba(0, 0, 0, 0.08)'
-    }
+      scale: 1.1,
+      transition: { type: 'spring', stiffness: 400, damping: 10 },
+    },
+  };
+
+  const buttonVariants = {
+    initial: { scale: 1 },
+    hover: {
+      scale: 1.05,
+      boxShadow: '0 10px 30px -10px rgba(0, 118, 255, 0.5)',
+      transition: {
+        type: 'spring',
+        stiffness: 400,
+        damping: 10,
+      },
+    },
+    tap: { scale: 0.98 },
   };
 
   // Wave animation
@@ -197,34 +115,25 @@ const Hero = () => {
     }
   };
 
-  const yBg = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
-  const yText = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
-
-  const socialLinks = [
-    { icon: <FaGithub />, href: "https://github.com/yourusername", label: "GitHub" },
-    { icon: <FaLinkedin />, href: "https://linkedin.com/in/yourusername", label: "LinkedIn" },
-    { icon: <FaTwitter />, href: "https://twitter.com/yourusername", label: "Twitter" },
-    { icon: <SiLeetcode />, href: "https://leetcode.com/yourusername", label: "LeetCode" },
-  ];
-
-
   return (
     <section 
+      ref={ref} 
       id="home" 
-      ref={ref}
-      className="relative min-h-screen flex items-center justify-center overflow-hidden"
+      className="relative min-h-screen flex items-center justify-center overflow-hidden pt-10 px-4 sm:px-6 lg:px-8"
     >
-      {/* Background elements */}
+      {/* Background elements with Three.js */}
       <motion.div 
         className="absolute inset-0 z-0"
         style={{ y: yBg }}
       >
-        <div className="absolute inset-0 bg-gradient-to-b from-surface to-surface/80" />
-        <div className="absolute inset-0 bg-grid-pattern opacity-5" />
+        <div className="absolute inset-0 bg-gradient-to-b from-background to-background/80" />
+        <div className="absolute inset-0 opacity-20" style={{
+          backgroundImage: 'radial-gradient(circle at 1px 1px, hsl(var(--foreground)/0.1) 1px, transparent 0)',
+          backgroundSize: '40px 40px'
+        }}></div>
         <ThreeScene />
       </motion.div>
 
-      {/* Content */}
       <div className="container relative z-10 py-12 sm:py-20 md:py-32">
         <motion.div 
           className="flex flex-col-reverse lg:grid lg:grid-cols-2 gap-8 md:gap-12 items-center"
@@ -233,54 +142,53 @@ const Hero = () => {
           animate={isInView ? "show" : "hidden"}
         >
           {/* Left Column - Text Content */}
-          <motion.div className="text-center lg:text-left mt-8 lg:mt-0">
+          <motion.div className="text-center lg:text-left">
             <motion.div variants={item} className="mb-6">
-              <span className="inline-flex items-center px-4 py-1.5 rounded-full text-sm font-medium bg-primary/10 text-primary">
-                <BsPersonWorkspace className="mr-2" />
-                Full Stack Developer
-              </span>
+              <div className="inline-flex items-center px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-sm text-primary font-medium">
+                <span className="w-2 h-2 rounded-full bg-primary mr-2 animate-pulse"></span>
+                Available for work
+              </div>
             </motion.div>
 
-            <div className="overflow-hidden">
-              <motion.h1 
-                className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6 text-primaryFg"
-              >
-                <div className="inline-flex flex-wrap items-center">
-                  {staggeredText("Hi, I'm Atif")}
-                  <motion.span 
-                    className="ml-2 text-yellow-300 inline-block"
-                    variants={waveAnimation}
-                    initial="initial"
-                    animate="animate"
-                    whileHover="hover"
-                  >
-                    <FaHandPaper className="text-3xl md:text-4xl inline" />
-                  </motion.span>
-                </div>
-                <motion.span 
-                  className="block mt-2 bg-gradient-to-r from-primary via-secondary to-primary bg-[length:200%_auto] bg-clip-text text-transparent"
-                  variants={gradientText}
-                  initial="hidden"
-                  animate={isInView ? "visible" : "hidden"}
-                >
-                  Building Digital Experiences
-                </motion.span>
-              </motion.h1>
-            </div>
-
-            <motion.div 
-              className="text-lg md:text-xl text-muted/90 mb-8 max-w-2xl mx-auto lg:mx-0 leading-relaxed"
-              variants={container}
-              initial="hidden"
-              animate={isInView ? "show" : "hidden"}
+            <motion.h1 
+              variants={item} 
+              className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6"
             >
-              <motion.p variants={item} className="mb-4">
-                {staggeredText("I create exceptional digital experiences using cutting-edge web technologies, ")}
-              </motion.p>
-              <motion.p variants={item}>
-                {staggeredText("with a strong focus on performance, accessibility, and elegant design.")}
-              </motion.p>
-            </motion.div>
+              <div className="inline-flex flex-wrap items-center">
+                <span className="text-muted-foreground">Hi, I'm </span>
+                <motion.span 
+                  className="ml-2 text-yellow-300 inline-block"
+                  variants={waveAnimation}
+                  initial="initial"
+                  animate="animate"
+                  whileHover="hover"
+                >
+                  <FaHandPaper className="text-3xl md:text-4xl inline" />
+                </motion.span>
+              </div>
+              {mounted && (
+                <TypeAnimation
+                  sequence={[
+                    'Atif Shahzad',
+                    1000,
+                    'A Full Stack Developer',
+                    1000,
+                  ]}
+                  wrapper="div"
+                  cursor={true}
+                  repeat={Infinity}
+                  className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary block mt-2"
+                  style={{ display: 'inline-block' }}
+                />
+              )}
+            </motion.h1>
+
+            <motion.p 
+              variants={item}
+              className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto lg:mx-0 mb-8 leading-relaxed"
+            >
+              I build exceptional digital experiences with modern web technologies and clean, efficient code.
+            </motion.p>
 
             <motion.div 
               variants={item}
@@ -297,60 +205,22 @@ const Hero = () => {
                   aria-hidden="true"
                 />
                 <motion.a
-                  href="#projects"
-                  className="relative px-8 py-3.5 rounded-lg font-medium overflow-hidden z-10"
-                  initial={["initial", "primary"]}
-                  animate={["initial", "primary"]}
-                  whileHover={["hover", "primary"]}
-                  whileTap="tap"
-                  variants={buttonVariants}
-                  style={{
-                    color: 'white',
-                    WebkitFontSmoothing: 'antialiased',
-                    WebkitTapHighlightColor: 'transparent',
-                    position: 'relative',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    cursor: 'pointer',
-                    textDecoration: 'none',
-                    zIndex: 1
-                  }}
-                >
-                  <span className="relative z-10 flex items-center text-sm md:text-base font-semibold tracking-wide">
-                    <span className="mr-2">🚀</span>
-                    View My Work
-                  </span>
-                </motion.a>
-              </motion.div>
-              
-              <motion.div className="relative group">
-                <motion.a
                   href="#contact"
-                  className="relative px-8 py-3.5 rounded-lg font-medium overflow-hidden"
-                  initial={["initial", "secondary"]}
-                  animate={["initial", "secondary"]}
-                  whileHover={["secondaryHover"]}
-                  whileTap="tap"
                   variants={buttonVariants}
-                  style={{
-                    WebkitFontSmoothing: 'antialiased',
-                    WebkitTapHighlightColor: 'transparent',
-                    position: 'relative',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    cursor: 'pointer',
-                    textDecoration: 'none',
-                    zIndex: 1,
-                    transition: 'all 0.3s ease',
-                    border: '2px solid var(--color-primary)'
-                  }}
+                  initial="initial"
+                  whileHover="hover"
+                  whileTap="tap"
+                  className="relative px-8 py-4 rounded-lg bg-primary text-primary-foreground font-medium text-lg flex items-center gap-2 group z-10"
                 >
-                  <span className="relative z-10 flex items-center text-sm md:text-base font-medium">
-                    <MdOutlineEmail className="mr-2 text-lg" style={{ color: 'var(--color-primary)' }} />
-                    Get In Touch
-                  </span>
+                  Hire Me
+                  <svg 
+                    className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" 
+                    fill="none" 
+                    viewBox="0 0 24 24" 
+                    stroke="currentColor"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                  </svg>
                 </motion.a>
               </motion.div>
             </motion.div>
@@ -361,14 +231,22 @@ const Hero = () => {
             >
               <div className="h-px w-8 bg-border"></div>
               <div className="flex space-x-4">
-                {socialLinks.map((link, index) => (
+                {[
+                  { icon: <FaGithub />, href: "https://github.com/yourusername", label: "GitHub" },
+                  { icon: <FaLinkedin />, href: "https://linkedin.com/in/yourusername", label: "LinkedIn" },
+                  { icon: <FaTwitter />, href: "https://twitter.com/yourusername", label: "Twitter" }
+                ].map((link, index) => (
                   <motion.a
                     key={index}
                     href={link.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-muted hover:text-primary transition-colors text-xl"
-                    whileHover={{ y: -3 }}
+                    variants={socialIcon}
+                    custom={index}
+                    initial="hidden"
+                    animate={isInView ? "show" : "hidden"}
+                    whileHover="hover"
+                    className="text-muted-foreground hover:text-foreground transition-colors text-xl"
                     aria-label={link.label}
                   >
                     {link.icon}
@@ -378,24 +256,13 @@ const Hero = () => {
             </motion.div>
           </motion.div>
 
-          {/* Right Column - Image */}
+          {/* Right Column - Profile Image */}
           <motion.div 
             variants={item}
             className="relative w-full max-w-xs sm:max-w-md mx-auto lg:order-1"
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
           >
-            <AnimatePresence>
-              {isHovered && (
-                <motion.div 
-                  className="absolute -inset-4 bg-gradient-to-r from-primary/10 to-secondary/10 rounded-full blur-2xl"
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 0.3, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.9 }}
-                  transition={{ duration: 0.5 }}
-                />
-              )}
-            </AnimatePresence>
             <div className="relative z-10 w-56 h-56 sm:w-64 sm:h-64 md:w-80 md:h-80 lg:w-96 lg:h-96 mx-auto">
               <div className="absolute inset-0 rounded-full bg-gradient-to-br from-primary/20 via-secondary/20 to-accent/20 blur-2xl animate-blob" />
               <div className="absolute inset-0 rounded-full bg-gradient-to-br from-primary/10 via-secondary/10 to-accent/10 animate-blob animation-delay-2000" />
@@ -416,6 +283,32 @@ const Hero = () => {
           </motion.div>
         </motion.div>
       </div>
+
+      <motion.div 
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center z-10"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ 
+          opacity: isInView ? 1 : 0, 
+          y: isInView ? 0 : 20 
+        }}
+        transition={{ delay: 1.5 }}
+      >
+        <div className="text-sm text-muted-foreground mb-2">Scroll down</div>
+        <div className="w-6 h-10 border-2 border-foreground/30 rounded-full flex justify-center p-1">
+          <motion.div 
+            className="w-1 h-2 bg-foreground/70 rounded-full"
+            animate={{ 
+              y: [0, 10, 0],
+              opacity: [0.6, 1, 0.6]
+            }}
+            transition={{ 
+              repeat: Infinity, 
+              duration: 1.8,
+              ease: "easeInOut"
+            }}
+          />
+        </div>
+      </motion.div>
     </section>
   );
 };
@@ -438,11 +331,5 @@ export default Hero;
 }
 .animation-delay-4000 {
   animation-delay: 4s;
-}
-.bg-grid-pattern {
-  background-image: 
-    linear-gradient(to right, rgba(var(--color-border), 0.2) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(var(--color-border), 0.2) 1px, transparent 1px);
-  background-size: 40px 40px;
 }
 */
