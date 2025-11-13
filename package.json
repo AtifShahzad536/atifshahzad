@@ -22,7 +22,7 @@
     "react-intersection-observer": "^10.0.0",
     "react-router-dom": "^7.9.5",
     "react-scroll": "^1.9.3",
-    "react-tilt": "^1.0.0",
+    "react-parallax-tilt": "^1.7.3",
     "react-type-animation": "^3.2.0",
     "three": "^0.181.0"
   },
