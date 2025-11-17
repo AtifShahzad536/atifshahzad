@@ -232,19 +232,20 @@ ${formattedSentences.join('\n')}
   };
 
   return (
-    <div className="fixed bottom-4 right-4 z-50">
+    <div className="fixed bottom-4 right-4 z-40">
       {/* Chat Window */}
       {isOpen && (
         <motion.div 
-          className={`fixed bottom-0 right-0 sm:right-4 sm:bottom-4 z-40 w-full sm:w-96 bg-white dark:bg-gray-800 rounded-t-2xl sm:rounded-2xl shadow-2xl overflow-hidden flex flex-col transition-all duration-300 ${
+          className={`fixed bottom-4 right-4 z-40 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl overflow-hidden flex flex-col transition-all duration-300 ${
             isOpen ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'
           }`}
           style={{
-            height: isMobile ? '90%' : '80vh',
-            maxHeight: isMobile ? 'none' : '800px',
+            height: isMobile ? '70vh' : '600px',
+            width: isMobile ? '92vw' : '380px',
+            maxWidth: '400px',
+            maxHeight: '80vh',
             boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1)',
-            maxWidth: isMobile ? '100%' : '100%',
-            borderRadius: isMobile ? '1.5rem 1.5rem 0 0' : '1rem',
+            borderRadius: '1rem',
           }}
           initial={{ opacity: 0, y: 20, scale: 0.95 }}
           animate={{ 
@@ -305,8 +306,8 @@ ${formattedSentences.join('\n')}
           </div>
 
           {/* Messages */}
-          <div className="relative flex-1 p-3 sm:p-4 overflow-y-auto bg-gradient-to-br from-gray-50 to-gray-100/70 dark:from-gray-900/90 dark:to-gray-800/90 scrollbar-thin scrollbar-thumb-gray-300/70 dark:scrollbar-thumb-gray-600/70 scrollbar-track-transparent">
-            <div className="space-y-2 sm:space-y-3">
+          <div className="relative flex-1 p-2 sm:p-4 overflow-y-auto bg-gradient-to-br from-gray-50 to-gray-100/70 dark:from-gray-900/90 dark:to-gray-800/90 scrollbar-thin scrollbar-thumb-gray-300/70 dark:scrollbar-thumb-gray-600/70 scrollbar-track-transparent">
+            <div className="space-y-1.5 sm:space-y-3">
               {messages.map((msg, index) => (
                 <motion.div
                   key={index}
@@ -394,7 +395,7 @@ ${formattedSentences.join('\n')}
           </div>
 
           {/* Input Area */}
-          <div className="p-3 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm border-t border-gray-100 dark:border-gray-700">
+          <div className="p-2 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm border-t border-gray-100 dark:border-gray-700">
             {!message && messages.length <= 1 && (
               <motion.div 
                 className="mb-2 sm:mb-3 flex flex-wrap gap-1.5 sm:gap-2 overflow-x-auto pb-1.5 -mx-1 px-1"
@@ -450,8 +451,8 @@ ${formattedSentences.join('\n')}
         aria-label={isOpen ? 'Close chat' : 'Open chat'}
       >
         <div className="relative">
-          <div className="w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-full flex items-center justify-center shadow-lg border-2 border-white/20 hover:border-white/40 transition-all">
-            <FaRobot className="text-white text-2xl" />
+          <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-full flex items-center justify-center shadow-lg border-2 border-white/20 hover:border-white/40 transition-all">
+            <FaRobot className="text-white text-xl sm:text-2xl" />
           </div>
           
           {/* Message count badge */}
