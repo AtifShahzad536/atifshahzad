@@ -191,18 +191,31 @@ ${formattedSentences.join('\n')}
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [isOpen]);
 
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkIfMobile = () => {
+      setIsMobile(window.innerWidth < 640); // sm breakpoint in Tailwind
+    };
+    
+    checkIfMobile();
+    window.addEventListener('resize', checkIfMobile);
+    
+    return () => {
+      window.removeEventListener('resize', checkIfMobile);
+    };
+  }, []);
+
   // Animation variants for messages
   const messageVariants = {
-    hidden: { opacity: 0, y: 10, scale: 0.98 },
+    hidden: { opacity: 0, y: 10 },
     visible: (i) => ({
       opacity: 1,
       y: 0,
-      scale: 1,
       transition: {
         delay: i * 0.03,
-        type: 'spring',
-        stiffness: 600,
-        damping: 20
+        type: 'tween',
+        duration: 0.3
       }
     }),
     exit: { opacity: 0, scale: 0.95, transition: { duration: 0.15 } }
@@ -219,30 +232,34 @@ ${formattedSentences.join('\n')}
   };
 
   return (
-    <div className="fixed bottom-4 right-4 sm:bottom-8 sm:right-8 z-50">
+    <div className="fixed bottom-4 right-4 z-50">
       {/* Chat Window */}
       {isOpen && (
         <motion.div 
-          className="chat-window bg-white/90 dark:bg-gray-800/90 rounded-2xl shadow-2xl overflow-hidden flex flex-col border border-gray-200/50 dark:border-gray-700/50 backdrop-blur-lg"
+          className={`fixed bottom-0 right-0 sm:right-4 sm:bottom-4 z-40 w-full sm:w-96 bg-white dark:bg-gray-800 rounded-t-2xl sm:rounded-2xl shadow-2xl overflow-hidden flex flex-col transition-all duration-300 ${
+            isOpen ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'
+          }`}
           style={{
-            width: 'calc(100vw - 2rem)', 
-            maxWidth: '420px',
-            height: '80vh',
-            maxHeight: '700px',
-            '--tw-backdrop-blur': 'blur(20px)',
+            height: isMobile ? '90%' : '80vh',
+            maxHeight: isMobile ? 'none' : '800px',
+            boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1)',
+            maxWidth: isMobile ? '100%' : '100%',
+            borderRadius: isMobile ? '1.5rem 1.5rem 0 0' : '1rem',
           }}
           initial={{ opacity: 0, y: 20, scale: 0.95 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          exit={{ opacity: 0, y: 20, scale: 0.95 }}
-          transition={{ 
-            type: 'spring',
-            damping: 25,
-            stiffness: 350,
-            mass: 0.5
+          animate={{ 
+            opacity: isOpen ? 1 : 0, 
+            y: isOpen ? 0 : 20,
+            scale: isOpen ? 1 : 0.95,
+            transition: { 
+              type: 'spring',
+              damping: 25,
+              stiffness: 350
+            }
           }}
         >
           {/* Header with glass effect */}
-          <div className="relative bg-gradient-to-r from-emerald-600 to-teal-500 p-3 flex justify-between items-center shadow-md">
+          <div className="relative bg-gradient-to-r from-emerald-600 to-teal-500 p-2 sm:p-3 flex justify-between items-center shadow-md">
             <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/20 to-teal-400/20 backdrop-blur-sm"></div>
             <div className="relative flex items-center space-x-3 w-full justify-between px-4">
               <motion.div 
@@ -288,8 +305,8 @@ ${formattedSentences.join('\n')}
           </div>
 
           {/* Messages */}
-          <div className="flex-1 p-4 overflow-y-auto bg-gradient-to-br from-gray-50 to-gray-100/70 dark:from-gray-900/90 dark:to-gray-800/90 scrollbar-thin scrollbar-thumb-gray-300/70 dark:scrollbar-thumb-gray-600/70 scrollbar-track-transparent">
-            <div className="space-y-4">
+          <div className="relative flex-1 p-3 sm:p-4 overflow-y-auto bg-gradient-to-br from-gray-50 to-gray-100/70 dark:from-gray-900/90 dark:to-gray-800/90 scrollbar-thin scrollbar-thumb-gray-300/70 dark:scrollbar-thumb-gray-600/70 scrollbar-track-transparent">
+            <div className="space-y-2 sm:space-y-3">
               {messages.map((msg, index) => (
                 <motion.div
                   key={index}
@@ -377,98 +394,45 @@ ${formattedSentences.join('\n')}
           </div>
 
           {/* Input Area */}
-          <div className="relative">
-            {/* Animated gradient border */}
-            <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-b-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10"></div>
-            
-            <form 
-              onSubmit={handleSendMessage} 
-              className="relative p-4 border-t border-gray-100/50 dark:border-gray-700/50 bg-white/90 dark:bg-gray-800/90 backdrop-blur-lg rounded-b-2xl"
-            >
-              {/* Quick Suggestions */}
-              {!message && messages.length <= 1 && (
-                <motion.div 
-                  className="mb-3 flex flex-wrap gap-2"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.5 }}
-                >
-                  <span className="text-xs text-gray-500 dark:text-gray-400 mr-2 self-center">Try asking:</span>
-                  {suggestions.slice(0, 2).map((suggestion, idx) => (
-                    <motion.button
-                      key={idx}
-                      type="button"
-                      onClick={() => handleSuggestionClick(suggestion)}
-                      className="px-3 py-1.5 text-xs bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-full border border-gray-200 dark:border-gray-600 shadow-sm hover:bg-indigo-50 dark:hover:bg-gray-700 transition-all duration-200 flex items-center"
-                      whileHover={{ scale: 1.02, backgroundColor: 'rgba(99, 102, 241, 0.1)' }}
-                      whileTap={{ scale: 0.98 }}
-                    >
-                      {suggestion}
-                      {idx === 0 && <span className="ml-1 text-indigo-500">→</span>}
-                    </motion.button>
-                  ))}
-                </motion.div>
-              )}
-              
-              <div className="flex items-stretch space-x-3 relative">
-                <div className="relative flex-1">
-                  <input
-                    type="text"
-                    value={message}
-                    onChange={(e) => setMessage(e.target.value)}
-                    placeholder="Message Sigma Assistant..."
-                    className="chat-input w-full p-3 pr-12 rounded-xl border-2 border-gray-200/80 dark:border-gray-600/50 bg-white/90 dark:bg-gray-700/90 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500/50 transition-all duration-200 text-sm sm:text-base shadow-sm backdrop-blur-sm"
-                  />
-                  <button 
-                    type="button"
-                    onClick={() => setMessage('')}
-                    className={`absolute right-12 top-1/2 -translate-y-1/2 p-1 rounded-full transition-all ${
-                      message 
-                        ? 'opacity-100 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 hover:bg-gray-100/50 dark:hover:bg-gray-600/30' 
-                        : 'opacity-0 pointer-events-none'
-                    }`}
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                  </button>
-                </div>
-                <motion.button 
-                  type="submit"
-                  disabled={!message.trim()}
-                  className={`p-3 rounded-xl transition-all duration-300 flex-shrink-0 flex items-center justify-center ${
-                    message.trim() 
-                      ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg hover:shadow-xl hover:shadow-indigo-500/30 hover:scale-105' 
-                      : 'bg-gray-200 dark:bg-gray-700 text-gray-400 cursor-not-allowed'
-                  }`}
-                  whileHover={message.trim() ? { 
-                    scale: 1.05,
-                    rotate: [0, -5, 5, 0],
-                    transition: { 
-                      rotate: { 
-                        repeat: Infinity, 
-                        duration: 0.5 
-                      } 
-                    } 
-                  } : {}}
-                  whileTap={message.trim() ? { scale: 0.95 } : {}}
-                  style={{
-                    boxShadow: message.trim() ? '0 4px 20px -5px rgba(99, 102, 241, 0.4)' : 'none'
-                  }}
-                >
-                  <IoMdSend className="text-lg" />
-                </motion.button>
-              </div>
-              
-              {/* Microphone button for future voice input */}
-              <button 
-                type="button" 
-                className="absolute right-24 top-1/2 -translate-y-1/2 p-1.5 text-gray-400 hover:text-indigo-500 transition-colors"
-                aria-label="Voice input"
+          <div className="p-3 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm border-t border-gray-100 dark:border-gray-700">
+            {!message && messages.length <= 1 && (
+              <motion.div 
+                className="mb-2 sm:mb-3 flex flex-wrap gap-1.5 sm:gap-2 overflow-x-auto pb-1.5 -mx-1 px-1"
+                initial={{ opacity: 0, y: 5 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
               >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
-                </svg>
+                <span className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 mr-1.5 sm:mr-2 self-center">Try:</span>
+                {suggestions.slice(0, 3).map((suggestion, idx) => (
+                  <motion.button
+                    key={idx}
+                    type="button"
+                    onClick={() => handleSuggestionClick(suggestion)}
+                    className="px-2.5 py-1 sm:px-3 sm:py-1.5 text-[11px] sm:text-xs bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-full border border-gray-200 dark:border-gray-600 shadow-sm hover:bg-emerald-50 dark:hover:bg-gray-700 transition-all duration-200 flex-shrink-0 flex items-center"
+                    whileHover={{ scale: 1.02, backgroundColor: 'rgba(16, 185, 129, 0.1)' }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    {suggestion.length > 15 ? `${suggestion.substring(0, 15)}...` : suggestion}
+                    {idx === 0 && <span className="ml-0.5 sm:ml-1 text-emerald-500">→</span>}
+                  </motion.button>
+                ))}
+              </motion.div>
+            )}
+            <form onSubmit={handleSendMessage} className="relative flex items-center">
+              <input
+                type="text"
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                placeholder="Type a message..."
+                className="flex-1 p-3 pr-11 sm:pr-12 text-sm sm:text-base bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl sm:rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-200 chat-input"
+                onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handleSendMessage(e)}
+              />
+              <button
+                type="submit"
+                className="absolute right-1.5 sm:right-2 w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-full flex items-center justify-center shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-all duration-200"
+                disabled={!message.trim()}
+              >
+                <IoMdSend className="text-base sm:text-lg" />
               </button>
             </form>
           </div>
@@ -477,105 +441,59 @@ ${formattedSentences.join('\n')}
 
       {/* Floating Action Button */}
       <motion.div 
-        className="fixed bottom-4 right-4 sm:bottom-8 sm:right-8 z-50"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.5 }}
+        className={`fixed bottom-4 right-4 z-50 rounded-full shadow-xl transition-all duration-300 ${
+          isOpen ? 'scale-0' : 'scale-100'
+        }`}
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.95 }}
+        onClick={() => setIsOpen(!isOpen)}
+        aria-label={isOpen ? 'Close chat' : 'Open chat'}
       >
-        <motion.button
-          className={`w-14 h-14 rounded-full flex items-center justify-center shadow-2xl ${
-            isOpen 
-              ? 'bg-gradient-to-br from-red-500 to-pink-600 hover:from-red-600 hover:to-pink-700' 
-              : 'bg-gradient-to-br from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700'
-          } transition-all duration-300 group relative overflow-hidden`}
-          onClick={() => setIsOpen(!isOpen)}
-          whileHover={{ 
-            scale: 1.05,
-            boxShadow: '0 15px 30px -5px rgba(99, 102, 241, 0.4)'
-          }}
-          whileTap={{ scale: 0.95 }}
-          aria-label={isOpen ? 'Close chat' : 'Open chat'}
-        >
-          {/* Animated background */}
+        <div className="relative">
+          <div className="w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-full flex items-center justify-center shadow-lg border-2 border-white/20 hover:border-white/40 transition-all">
+            <FaRobot className="text-white text-2xl" />
+          </div>
+          
+          {/* Message count badge */}
           <motion.div 
-            className="absolute inset-0 bg-gradient-to-br from-white/10 to-white/5"
+            className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] sm:text-xs font-bold rounded-full w-4 h-4 sm:w-5 sm:h-5 flex items-center justify-center shadow-md"
+            initial={{ scale: 0 }}
+            animate={{ 
+              scale: messages.length > 0 && !isOpen ? 1 : 0,
+              rotate: 0
+            }}
+            whileHover={{
+              rotate: 10,
+              transition: { 
+                type: 'spring',
+                stiffness: 500,
+                damping: 15
+              }
+            }}
+          >
+            {messages.length}
+          </motion.div>
+          
+          {/* Glow effect */}
+          <motion.span 
+            className="absolute inset-0 rounded-full"
+            style={{
+              backgroundColor: 'rgba(255, 255, 255, 0.2)',
+              scale: 1,
+              opacity: 0
+            }}
             animate={{
-              x: [-100, 100],
-              opacity: [0, 0.1, 0],
+              scale: 1.3,
+              opacity: 0.3,
             }}
             transition={{
-              duration: 2,
+              duration: 1.5,
               repeat: Infinity,
+              repeatType: 'reverse',
               ease: 'easeInOut',
             }}
           />
-          
-          <div className="relative z-10">
-            {isOpen ? (
-              <motion.div
-                key="close"
-                initial={{ rotate: -180, opacity: 0 }}
-                animate={{ rotate: 0, opacity: 1 }}
-                exit={{ rotate: 180, opacity: 0 }}
-                transition={{ 
-                  type: 'spring',
-                  stiffness: 500,
-                  damping: 20
-                }}
-              >
-                <FaTimes className="text-2xl text-white" />
-              </motion.div>
-            ) : (
-              <motion.div
-                key="chat"
-                initial={{ scale: 1 }}
-                animate={{ 
-                  scale: [1, 1.1, 1],
-                  transition: { 
-                    repeat: Infinity, 
-                    repeatType: 'reverse',
-                    duration: 2 
-                  } 
-                }}
-                className="relative"
-              >
-                <FaCommentDots className="text-2xl text-white" />
-                {messages.length > 1 && (
-                  <motion.span 
-                    className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-md"
-                    initial={{ scale: 0 }}
-                    animate={{ 
-                      scale: 1,
-                      transition: { 
-                        type: 'spring', 
-                        stiffness: 500, 
-                        damping: 15 
-                      } 
-                    }}
-                  >
-                    {messages.length - 1}
-                  </motion.span>
-                )}
-              </motion.div>
-            )}
-          </div>
-          
-          {/* Glow effect */}
-          {!isOpen && (
-            <motion.span 
-              className="absolute inset-0 rounded-full bg-white/20"
-              animate={{
-                scale: [1, 1.3, 1],
-                opacity: [0, 0.3, 0],
-              }}
-              transition={{
-                duration: 3,
-                repeat: Infinity,
-                ease: 'easeInOut',
-              }}
-            />
-          )}
-        </motion.button>
+        </div>
         
         {/* Tooltip */}
         {!isOpen && (
