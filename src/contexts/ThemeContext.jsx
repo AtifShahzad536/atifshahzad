@@ -1,32 +1,42 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 
-const ThemeContext = createContext();
+export const ThemeContext = createContext();
 
 export const ThemeProvider = ({ children }) => {
-  const [light, setLight] = useState(() => {
-    if (typeof window === 'undefined') return false;
-    const stored = localStorage.getItem('theme');
-    if (stored) return stored === 'light';
-    return window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
-  });
+  const [theme, setTheme] = useState('dark');
+  
+  useEffect(() => {
+    // Check for saved theme preference or use system preference
+    const savedTheme = localStorage.getItem('theme');
+    const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    
+    setTheme(savedTheme || (systemPrefersDark ? 'dark' : 'light'));
+  }, []);
 
   useEffect(() => {
-    const html = document.documentElement;
-    if (light) {
-      html.classList.add('light');
-      html.style.colorScheme = 'light';
-      localStorage.setItem('theme', 'light');
-    } else {
-      html.classList.remove('light');
-      html.style.colorScheme = 'dark';
-      localStorage.setItem('theme', 'dark');
-    }
-  }, [light]);
+    const root = window.document.documentElement;
+    
+    // Remove both classes first to avoid conflicts
+    root.classList.remove('light', 'dark');
+    
+    // Add the current theme class
+    root.classList.add(theme);
+    
+    // Update local storage
+    localStorage.setItem('theme', theme);
+    
+    // Update meta theme color
+    document
+      .querySelector('meta[name="theme-color"]')
+      ?.setAttribute('content', theme === 'dark' ? '#1a202c' : '#ffffff');
+  }, [theme]);
 
-  const toggleTheme = () => setLight(prev => !prev);
+  const toggleTheme = () => {
+    setTheme(prevTheme => prevTheme === 'dark' ? 'light' : 'dark');
+  };
 
   return (
-    <ThemeContext.Provider value={{ light, toggleTheme }}>
+    <ThemeContext.Provider value={{ theme, toggleTheme }}>
       {children}
     </ThemeContext.Provider>
   );

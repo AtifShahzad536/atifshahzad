@@ -183,7 +183,7 @@ const Contact = () => {
             <FiSend className="text-primary" />
             Let's work together
           </span>
-          <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
+          <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-cyan-400">
             Get In Touch
           </h2>
           <p className="text-lg text-muted-foreground">

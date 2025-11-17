@@ -72,8 +72,8 @@ const About = () => {
     <section id="about" className="py-16 md:py-24">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">About Me</h2>
-          <div className="w-20 h-1 bg-gradient-to-r from-primary to-secondary mx-auto mb-6"></div>
+          <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-cyan-400">About Me</h2>
+          <div className="w-20 h-1 bg-gradient-to-r from-blue-500 to-cyan-400 mx-auto mb-6"></div>
           <p className="text-muted-foreground max-w-3xl mx-auto text-lg leading-relaxed text-justify mb-6">
             I'm a passionate Full Stack Developer with expertise in modern web technologies, dedicated to creating efficient, scalable, and user-friendly applications. With a strong foundation in both frontend and backend development, I bring ideas to life through clean code and innovative solutions. My approach combines technical excellence with a keen eye for design, ensuring every project delivers both functionality and exceptional user experiences.
           </p>
@@ -148,10 +148,12 @@ const About = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
           {/* Left Column - Experience */}
           <div>
-            <h3 className="text-2xl font-semibold mb-6 flex items-center justify-center lg:justify-start">
-              <FaLaptopCode className="text-2xl text-primary mr-3" />
-              My Experience
-            </h3>
+            <div className="flex flex-col items-center lg:items-start mb-8">
+              <h3 className="text-3xl md:text-4xl font-bold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-cyan-400">
+                My Experience
+              </h3>
+              <div className="w-16 h-1 bg-gradient-to-r from-blue-500 to-cyan-400"></div>
+            </div>
             <ul className="space-y-5">
               {experiences.map((item, index) => (
                 <motion.li 
@@ -173,10 +175,12 @@ const About = () => {
 
           {/* Right Column - Skills */}
           <div>
-            <h3 className="text-2xl font-semibold mb-6 flex items-center justify-center lg:justify-start">
-              <FaServer className="text-primary mr-2" />
-              My Skills
-            </h3>
+            <div className="flex flex-col items-center lg:items-start mb-8">
+              <h3 className="text-3xl md:text-4xl font-bold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-cyan-400">
+                My Skills
+              </h3>
+              <div className="w-16 h-1 bg-gradient-to-r from-blue-500 to-cyan-400"></div>
+            </div>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
               {skills.map((skill, index) => (
                 <motion.div

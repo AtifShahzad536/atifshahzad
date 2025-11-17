@@ -71,7 +71,7 @@ const Education = () => {
             <FaUniversity className="text-primary" />
             <span className="text-sm tracking-wide text-muted-foreground">Academic Background</span>
           </div>
-          <h2 className="text-4xl md:text-5xl font-extrabold mb-3 bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
+          <h2 className="text-4xl md:text-5xl font-extrabold mb-3 bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-cyan-400">
             Education Journey
           </h2>
           <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto">

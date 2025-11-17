@@ -94,7 +94,7 @@ const Header = () => {
             {/* Left: Brand */}
             <motion.a 
               href="#home" 
-              className="text-2xl font-bold tracking-tight bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent"
+              className="text-2xl font-bold tracking-tight bg-gradient-to-r from-blue-500 to-cyan-400 bg-clip-text text-transparent"
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.98 }}
             >

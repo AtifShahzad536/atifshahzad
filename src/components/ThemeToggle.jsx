@@ -3,7 +3,8 @@ import { FaSun, FaMoon } from 'react-icons/fa';
 import { useTheme } from '../contexts/ThemeContext';
 
 const ThemeToggle = () => {
-  const { light, toggleTheme } = useTheme();
+  const { theme, toggleTheme } = useTheme();
+  const isLight = theme === 'light';
 
   return (
     <button
@@ -13,14 +14,14 @@ const ThemeToggle = () => {
       title="Toggle theme"
     >
       <span className="absolute left-2">
-        <FaSun className={`text-base transition-all duration-300 ${light ? 'text-primary opacity-100' : 'text-primary/70 opacity-70'}`} />
+        <FaSun className={`text-base transition-all duration-300 ${isLight ? 'text-primary opacity-100' : 'text-primary/70 opacity-70'}`} />
       </span>
       <span className="absolute right-2">
-        <FaMoon className={`text-base transition-all duration-300 ${light ? 'text-muted opacity-70' : 'text-primaryFg opacity-100'}`} />
+        <FaMoon className={`text-base transition-all duration-300 ${isLight ? 'text-muted opacity-70' : 'text-primaryFg opacity-100'}`} />
       </span>
       {/* sliding thumb */}
       <span
-        className={`absolute top-1 left-1 h-7 w-7 rounded-xl bg-background border border-border/60 shadow-soft transition-transform duration-300 ${light ? 'translate-x-0' : 'translate-x-7'}`}
+        className={`absolute top-1 left-1 h-7 w-7 rounded-xl bg-background border border-border/60 shadow-soft transition-transform duration-300 ${isLight ? 'translate-x-0' : 'translate-x-7'}`}
       />
     </button>
   );

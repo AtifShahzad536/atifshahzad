@@ -135,7 +135,7 @@ const Hero = () => {
     <section 
       ref={ref} 
       id="home" 
-      className="relative min-h-screen flex items-center justify-center pt-16 md:pt-10 px-4 sm:px-6 lg:px-8"
+      className="relative min-h-screen flex items-center justify-center pt-12 md:pt-8 px-4 sm:px-6 lg:px-8"
     >
       <div className="container relative z-10 py-8 sm:py-20 md:py-32">
         <motion.div 

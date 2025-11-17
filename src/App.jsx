@@ -5,7 +5,7 @@ import { useSmoothScroll } from './hooks/useSmoothScroll';
 import Header from './components/Header';
 import Home from './components/Home';
 import Footer from './components/Footer';
-import ChatBot from './components/ChatBot';
+import ChatBotIcon from './components/ChatBotIcon';
 import Preloader3D from './components/Preloader3D';
 import Background from './components/Background';
 
@@ -55,7 +55,7 @@ const App = () => {
                 <Home />
               </main>
               <Footer />
-              <ChatBot />
+              <ChatBotIcon />
             </motion.div>
           )}
         </AnimatePresence>
