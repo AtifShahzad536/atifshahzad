@@ -232,20 +232,22 @@ ${formattedSentences.join('\n')}
   };
 
   return (
-    <div className="fixed bottom-4 right-4 z-40">
+    <div className="fixed right-4 z-40" style={{ top: '6rem' }}>
       {/* Chat Window */}
       {isOpen && (
         <motion.div 
-          className={`fixed bottom-4 right-4 z-40 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl overflow-hidden flex flex-col transition-all duration-300 ${
+          className={`fixed top-4 right-4 z-40 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl overflow-hidden flex flex-col transition-all duration-300 ${
             isOpen ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'
           }`}
           style={{
-            height: isMobile ? '70vh' : '600px',
-            width: isMobile ? '92vw' : '380px',
-            maxWidth: '400px',
+            height: isMobile ? '55vh' : '500px',
+            width: isMobile ? '85vw' : '350px',
+            maxWidth: '350px',
             maxHeight: '80vh',
-            boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1)',
+            top: '5.5rem', // Position below header (header height + some spacing)
+            boxShadow: '0 2px 15px -3px rgba(0, 0, 0, 0.1)',
             borderRadius: '1rem',
+            transformOrigin: 'top right',
           }}
           initial={{ opacity: 0, y: 20, scale: 0.95 }}
           animate={{ 
@@ -306,7 +308,10 @@ ${formattedSentences.join('\n')}
           </div>
 
           {/* Messages */}
-          <div className="relative flex-1 p-2 sm:p-4 overflow-y-auto bg-gradient-to-br from-gray-50 to-gray-100/70 dark:from-gray-900/90 dark:to-gray-800/90 scrollbar-thin scrollbar-thumb-gray-300/70 dark:scrollbar-thumb-gray-600/70 scrollbar-track-transparent">
+          <div className="relative flex-1 p-2 overflow-y-auto bg-gradient-to-br from-gray-50 to-gray-100/70 dark:from-gray-900/90 dark:to-gray-800/90 scrollbar-thin scrollbar-thumb-gray-300/70 dark:scrollbar-thumb-gray-600/70 scrollbar-track-transparent" style={{
+            WebkitOverflowScrolling: 'touch',
+            paddingBottom: 'env(safe-area-inset-bottom, 0px)'
+          }}>
             <div className="space-y-1.5 sm:space-y-3">
               {messages.map((msg, index) => (
                 <motion.div
@@ -395,7 +400,9 @@ ${formattedSentences.join('\n')}
           </div>
 
           {/* Input Area */}
-          <div className="p-2 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm border-t border-gray-100 dark:border-gray-700">
+          <div className="p-2 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm border-t border-gray-100 dark:border-gray-700" style={{
+            paddingBottom: 'max(0.5rem, env(safe-area-inset-bottom, 0px))'
+          }}>
             {!message && messages.length <= 1 && (
               <motion.div 
                 className="mb-2 sm:mb-3 flex flex-wrap gap-1.5 sm:gap-2 overflow-x-auto pb-1.5 -mx-1 px-1"
@@ -442,9 +449,10 @@ ${formattedSentences.join('\n')}
 
       {/* Floating Action Button */}
       <motion.div 
-        className={`fixed bottom-4 right-4 z-50 rounded-full shadow-xl transition-all duration-300 ${
+        className={`fixed right-4 z-50 rounded-full shadow-xl transition-all duration-300 ${
           isOpen ? 'scale-0' : 'scale-100'
         }`}
+        style={{ top: '6rem' }}
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.95 }}
         onClick={() => setIsOpen(!isOpen)}
