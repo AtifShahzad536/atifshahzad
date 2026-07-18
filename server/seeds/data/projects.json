@@ -1,0 +1,62 @@
+[
+  {
+    "title": "E-commerce Platform",
+    "description": "A full-featured e-commerce platform with product listings, cart functionality, and secure checkout process.",
+    "shortDescription": "Online store with cart and checkout",
+    "technologies": ["React", "Node.js", "Express", "MongoDB", "Redux"],
+    "imageCover": "ecommerce-cover.jpg",
+    "images": ["ecommerce-1.jpg", "ecommerce-2.jpg", "ecommerce-3.jpg"],
+    "liveUrl": "https://example-ecommerce.com",
+    "githubUrl": "https://github.com/yourusername/ecommerce-platform",
+    "featured": true,
+    "createdAt": "2023-05-15T10:00:00.000Z"
+  },
+  {
+    "title": "Task Management App",
+    "description": "A task management application with drag-and-drop functionality, team collaboration, and real-time updates.",
+    "shortDescription": "Collaborative task management tool",
+    "technologies": ["React", "Node.js", "Socket.io", "MongoDB"],
+    "imageCover": "taskapp-cover.jpg",
+    "images": ["taskapp-1.jpg", "taskapp-2.jpg"],
+    "liveUrl": "https://taskapp.example.com",
+    "githubUrl": "https://github.com/yourusername/task-management-app",
+    "featured": true,
+    "createdAt": "2023-06-20T14:30:00.000Z"
+  },
+  {
+    "title": "Recipe Finder",
+    "description": "A web application for discovering and saving recipes with advanced search and filtering options.",
+    "shortDescription": "Discover and save your favorite recipes",
+    "technologies": ["Vue.js", "Express", "PostgreSQL", "Redis"],
+    "imageCover": "recipe-cover.jpg",
+    "images": ["recipe-1.jpg", "recipe-2.jpg", "recipe-3.jpg"],
+    "liveUrl": "https://recipefinder.example.com",
+    "githubUrl": "https://github.com/yourusername/recipe-finder",
+    "featured": true,
+    "createdAt": "2023-04-10T09:15:00.000Z"
+  },
+  {
+    "title": "Weather Dashboard",
+    "description": "A weather dashboard showing current conditions and forecasts with a clean, responsive interface.",
+    "shortDescription": "Real-time weather information",
+    "technologies": ["React", "OpenWeather API", "Chart.js"],
+    "imageCover": "weather-cover.jpg",
+    "images": ["weather-1.jpg", "weather-2.jpg"],
+    "liveUrl": "https://weather.example.com",
+    "githubUrl": "https://github.com/yourusername/weather-dashboard",
+    "featured": false,
+    "createdAt": "2023-03-05T11:20:00.000Z"
+  },
+  {
+    "title": "Blog Platform",
+    "description": "A full-stack blog platform with user authentication, rich text editing, and comment functionality.",
+    "shortDescription": "Modern blog with rich text editor",
+    "technologies": ["Next.js", "Node.js", "MongoDB", "Auth0"],
+    "imageCover": "blog-cover.jpg",
+    "images": ["blog-1.jpg", "blog-2.jpg", "blog-3.jpg"],
+    "liveUrl": "https://blog.example.com",
+    "githubUrl": "https://github.com/yourusername/blog-platform",
+    "featured": true,
+    "createdAt": "2023-07-12T16:45:00.000Z"
+  }
+]

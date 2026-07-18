@@ -1,0 +1,70 @@
+<script>
+    // Toggle the side navigation
+    document.addEventListener('DOMContentLoaded', function() {
+        const sidebarToggle = document.body.querySelector('#sidebarToggle');
+        const sidebarToggleTop = document.body.querySelector('#sidebarToggleTop');
+        
+        if (sidebarToggle) {
+            sidebarToggle.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.body.classList.toggle('sb-sidenav-toggled');
+                localStorage.setItem('sb|sidebar-toggle', document.body.classList.contains('sb-sidenav-toggled'));
+            });
+        }
+        
+        if (sidebarToggleTop) {
+            sidebarToggleTop.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.body.classList.toggle('sb-sidenav-toggled');
+                localStorage.setItem('sb|sidebar-toggle', document.body.classList.contains('sb-sidenav-toggled'));
+            });
+        }
+        
+        // Toggle dropdown menus
+        const dropdownElementList = [].slice.call(document.querySelectorAll('.dropdown-toggle'));
+        const dropdownList = dropdownElementList.map(function (dropdownToggleEl) {
+            return new bootstrap.Dropdown(dropdownToggleEl);
+        });
+        
+        // Close any open menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const target = event.target;
+            if (!target.closest('.dropdown') && !target.matches('.dropdown-toggle')) {
+                dropdownList.forEach(dropdown => {
+                    if (dropdown._menu.classList.contains('show')) {
+                        dropdown.hide();
+                    }
+                });
+            }
+        });
+        
+        // Initialize tooltips
+        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        const tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+        
+        // Initialize popovers
+        const popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
+        const popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+            return new bootstrap.Popover(popoverTriggerEl);
+        });
+        
+        // Auto-hide alerts after 5 seconds
+        const alerts = document.querySelectorAll('.alert');
+        alerts.forEach(alert => {
+            setTimeout(() => {
+                const bsAlert = new bootstrap.Alert(alert);
+                bsAlert.close();
+            }, 5000);
+        });
+    });
+    
+    // Enable tooltips everywhere
+    document.addEventListener('DOMContentLoaded', function() {
+        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    });
+</script>

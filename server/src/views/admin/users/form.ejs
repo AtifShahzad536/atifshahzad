@@ -1,0 +1,280 @@
+<%- include('../../layouts/main', { 
+  title: (user ? 'Edit' : 'Add New') + ' User | Portfolio Admin', 
+  currentPage: 'users',
+  scripts: [
+    'https://cdn.jsdelivr.net/npm/bs5-lightbox@1.8.3/dist/index.bundle.min.js',
+    '/js/user-form.js'
+  ],
+  styles: [
+    'https://cdn.jsdelivr.net/npm/bs5-lightbox@1.8.3/dist/index.bundle.min.css'
+  ]
+}) %>
+
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+  <h1 class="h2"><%= user ? 'Edit User' : 'Add New User' %></h1>
+  <div class="btn-toolbar mb-2 mb-md-0">
+    <a href="/admin/users" class="btn btn-sm btn-outline-secondary me-2">
+      <i class="fas fa-arrow-left me-1"></i> Back to Users
+    </a>
+    <button type="submit" form="userForm" class="btn btn-sm btn-primary">
+      <i class="fas fa-save me-1"></i> <%= user ? 'Update' : 'Create' %> User
+    </button>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-lg-8">
+    <div class="card mb-4">
+      <div class="card-header">
+        <h5 class="mb-0">User Details</h5>
+      </div>
+      <div class="card-body">
+        <form id="userForm" action="<%= user ? `/api/v1/users/${user._id}` : '/api/v1/users' %>" method="POST">
+          <% if (user) { %>
+            <input type="hidden" name="_method" value="PATCH">
+          <% } %>
+          
+          <div class="row">
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="name" class="form-label">Full Name *</label>
+                <input type="text" class="form-control" id="name" name="name" 
+                       value="<%= user ? user.name : '' %>" required>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="email" class="form-label">Email Address *</label>
+                <input type="email" class="form-control" id="email" name="email" 
+                       value="<%= user ? user.email : '' %>" required>
+              </div>
+            </div>
+          </div>
+          
+          <div class="row">
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="password" class="form-label">
+                  <%= user ? 'New ' : '' %>Password <%= user ? '' : '*' %>
+                </label>
+                <div class="input-group">
+                  <input type="password" class="form-control" id="password" name="password" 
+                         <%= user ? '' : 'required' %>
+                         placeholder="<%= user ? 'Leave blank to keep current' : 'Minimum 8 characters' %>">
+                  <button class="btn btn-outline-secondary toggle-password" type="button">
+                    <i class="fas fa-eye"></i>
+                  </button>
+                </div>
+                <% if (user) { %>
+                  <div class="form-text">Leave blank to keep current password</div>
+                <% } %>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="passwordConfirm" class="form-label">
+                  <%= user ? 'Confirm New ' : '' %>Password <%= user ? '' : '*' %>
+                </label>
+                <div class="input-group">
+                  <input type="password" class="form-control" id="passwordConfirm" name="passwordConfirm"
+                         <%= user ? '' : 'required' %>
+                         placeholder="<%= user ? 'Leave blank to keep current' : 'Confirm your password' %>">
+                  <button class="btn btn-outline-secondary toggle-password" type="button">
+                    <i class="fas fa-eye"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="row">
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="role" class="form-label">Role *</label>
+                <select class="form-select" id="role" name="role" required>
+                  <option value="user" <%= user && user.role === 'user' ? 'selected' : '' %>>User</option>
+                  <option value="admin" <%= user && user.role === 'admin' ? 'selected' : '' %>>Administrator</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label class="form-label">Status</label>
+                <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" id="active" name="active" 
+                         <%= !user || user.active ? 'checked' : '' %>>
+                  <label class="form-check-label" for="active">
+                    <%= !user || user.active ? 'Active' : 'Inactive' %>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="mb-3">
+            <label for="bio" class="form-label">Bio</label>
+            <textarea class="form-control" id="bio" name="bio" rows="3"><%= user ? user.bio || '' : '' %></textarea>
+            <div class="form-text">A short bio about the user</div>
+          </div>
+          
+          <div class="d-flex justify-content-between">
+            <a href="<%= user ? `/admin/users/${user._id}` : '/admin/users' %>" 
+               class="btn btn-outline-secondary">
+              Cancel
+            </a>
+            <div>
+              <% if (user) { %>
+                <a href="#" class="btn btn-outline-danger me-2" id="deleteBtn">
+                  <i class="fas fa-trash me-1"></i> Delete
+                </a>
+              <% } %>
+              <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save me-1"></i> <%= user ? 'Update' : 'Create' %> User
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+    
+    <!-- User Activity -->
+    <% if (user) { %>
+      <div class="card mb-4">
+        <div class="card-header">
+          <h5 class="mb-0">User Activity</h5>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-sm">
+              <tbody>
+                <tr>
+                  <th>Last Login</th>
+                  <td><%= user.lastLogin ? new Date(user.lastLogin).toLocaleString() : 'Never' %></td>
+                </tr>
+                <tr>
+                  <th>Last Active</th>
+                  <td><%= user.lastActive ? new Date(user.lastActive).toLocaleString() : 'Never' %></td>
+                </tr>
+                <tr>
+                  <th>Account Created</th>
+                  <td><%= new Date(user.createdAt).toLocaleString() %></td>
+                </tr>
+                <tr>
+                  <th>Last Updated</th>
+                  <td><%= new Date(user.updatedAt).toLocaleString() %></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    <% } %>
+  </div>
+  
+  <div class="col-lg-4">
+    <!-- Profile Picture -->
+    <div class="card mb-4">
+      <div class="card-header">
+        <h5 class="mb-0">Profile Picture</h5>
+      </div>
+      <div class="card-body text-center">
+        <div class="mb-3">
+          <img id="avatarPreview" 
+               src="<%= user && user.photo ? user.photo : '/img/avatar.png' %>" 
+               class="rounded-circle img-thumbnail" 
+               style="width: 200px; height: 200px; object-fit: cover;"
+               alt="Profile Picture">
+        </div>
+        <div class="d-grid gap-2">
+          <button type="button" class="btn btn-outline-primary" id="uploadAvatarBtn">
+            <i class="fas fa-upload me-1"></i> Upload New Photo
+          </button>
+          <% if (user && user.photo) { %>
+            <button type="button" class="btn btn-outline-danger" id="removeAvatarBtn">
+              <i class="fas fa-trash me-1"></i> Remove Photo
+            </button>
+          <% } %>
+          <input type="file" id="avatarInput" accept="image/*" class="d-none">
+          <input type="hidden" id="photo" name="photo" value="<%= user ? user.photo || '' : '' %>">
+        </div>
+      </div>
+    </div>
+    
+    <!-- Account Security -->
+    <div class="card">
+      <div class="card-header">
+        <h5 class="mb-0">Account Security</h5>
+      </div>
+      <div class="card-body">
+        <div class="d-grid gap-2">
+          <button type="button" class="btn btn-outline-warning text-start" id="resetPasswordBtn">
+            <i class="fas fa-key me-2"></i> Send Password Reset Email
+          </button>
+          <button type="button" class="btn btn-outline-danger text-start" id="deactivateAccountBtn">
+            <i class="fas fa-user-slash me-2"></i> <%= user && !user.active ? 'Activate' : 'Deactivate' %> Account
+          </button>
+          <% if (user) { %>
+            <div class="text-muted small mt-2">
+              <div><i class="far fa-clock me-1"></i> Last password change: 
+                <%= user.passwordChangedAt ? new Date(user.passwordChangedAt).toLocaleString() : 'Never' %></div>
+            </div>
+          <% } %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Delete User</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to delete this user? This action cannot be undone.</p>
+        <p class="text-danger">All data associated with this user will be permanently removed.</p>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" id="confirmDeleteCheckbox">
+          <label class="form-check-label" for="confirmDeleteCheckbox">
+            I understand that this action cannot be undone
+          </label>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <form action="<%= user ? `/api/v1/users/${user._id}` : '' %>" method="POST" id="deleteForm">
+          <input type="hidden" name="_method" value="DELETE">
+          <button type="submit" class="btn btn-danger" id="confirmDelete" disabled>
+            <i class="fas fa-trash me-1"></i> Delete User
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Image Crop Modal -->
+<div class="modal fade" id="cropImageModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Crop Image</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="img-container">
+          <img id="imageToCrop" src="" alt="Crop Image">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" id="cropImageBtn">
+          <i class="fas fa-crop me-1"></i> Crop & Save
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

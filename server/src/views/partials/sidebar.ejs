@@ -1,0 +1,85 @@
+<% // Ensure currentPage is defined and is a string
+const currentPage = typeof currentPage !== 'undefined' ? String(currentPage) : '';
+const unreadCount = typeof unreadCount !== 'undefined' ? Number(unreadCount) : 0;
+%>
+
+<div class="sidebar position-fixed">
+    <!-- Sidebar - Brand -->
+    <div class="sidebar-brand d-flex align-items-center justify-content-center py-4">
+        <div class="text-center">
+            <h4 class="mb-0">Portfolio Admin</h4>
+            <small>v1.0.0</small>
+        </div>
+    </div>
+
+    <!-- Divider -->
+    <hr class="sidebar-divider my-0">
+
+    <!-- Nav Items -->
+    <div class="nav flex-column">
+        <li class="nav-item">
+            <a class="nav-link<%= currentPage === 'dashboard' ? ' active' : '' %>" href="/admin">
+                <i class="fas fa-fw fa-tachometer-alt"></i>
+                <span>Dashboard</span>
+            </a>
+        </li>
+        
+        <!-- Heading -->
+        <div class="sidebar-heading px-3 mt-3 mb-1 text-white-50">
+            Manage
+        </div>
+        
+        <li class="nav-item">
+            <a class="nav-link<%= currentPage === 'projects' ? ' active' : '' %>" href="/admin/projects">
+                <i class="fas fa-fw fa-project-diagram"></i>
+                <span>Projects</span>
+            </a>
+        </li>
+        
+        <li class="nav-item">
+            <a class="nav-link<%= currentPage === 'messages' ? ' active' : '' %>" href="/admin/messages">
+                <i class="fas fa-fw fa-envelope"></i>
+                <span>Messages</span>
+                <% if (unreadCount > 0) { %>
+                    <span class="badge bg-danger rounded-pill float-end"><%= unreadCount %></span>
+                <% } %>
+            </a>
+        </li>
+        
+        <!-- Divider -->
+        <hr class="sidebar-divider mt-3 mb-1">
+        
+        <!-- Heading -->
+        <div class="sidebar-heading px-3 mt-3 mb-1 text-white-50">
+            Account
+        </div>
+        
+        <li class="nav-item">
+            <a class="nav-link" href="/admin/profile">
+                <i class="fas fa-fw fa-user"></i>
+                <span>Profile</span>
+            </a>
+        </li>
+        
+        <li class="nav-item">
+            <a class="nav-link" href="/admin/settings">
+                <i class="fas fa-fw fa-cog"></i>
+                <span>Settings</span>
+            </a>
+        </li>
+        
+        <li class="nav-item">
+            <a class="nav-link" href="/auth/logout" data-bs-toggle="tooltip" data-bs-placement="right" title="Logout">
+                <i class="fas fa-fw fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </a>
+        </li>
+    </div>
+    
+    <!-- Sidebar Toggle -->
+    <div class="text-center d-none d-md-inline">
+        <button class="btn btn-link text-white-50" id="sidebarToggle">
+            <i class="fa fa-chevron-left"></i>
+        </button>
+    </div>
+</div>

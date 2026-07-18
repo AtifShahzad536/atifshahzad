@@ -1,0 +1,66 @@
+<% // Initialize default values for all possible message types
+const messages = {
+    errors: [],
+    success: [],
+    infos: []
+};
+
+// Process errors array
+if (typeof errors !== 'undefined' && Array.isArray(errors)) {
+    messages.errors = errors.filter(Boolean).map(err => ({
+        type: 'danger',
+        icon: 'exclamation-circle',
+        text: typeof err === 'object' ? (err.msg || JSON.stringify(err)) : String(err)
+    }));
+}
+
+// Process success messages
+if (typeof success_msg !== 'undefined' && success_msg) {
+    const msgs = Array.isArray(success_msg) ? success_msg : [success_msg];
+    messages.success = msgs.filter(Boolean).map(msg => ({
+        type: 'success',
+        icon: 'check-circle',
+        text: String(msg)
+    }));
+}
+
+// Process error messages
+if (typeof error_msg !== 'undefined' && error_msg) {
+    const msgs = Array.isArray(error_msg) ? error_msg : [error_msg];
+    messages.errors = [...messages.errors, ...msgs.filter(Boolean).map(msg => ({
+        type: 'danger',
+        icon: 'exclamation-circle',
+        text: String(msg)
+    }))];
+}
+
+// Process single error object
+if (error) {
+    const msgs = Array.isArray(error) ? error : [error];
+    messages.errors = [...messages.errors, ...msgs.filter(Boolean).map(err => ({
+        type: 'danger',
+        icon: 'exclamation-circle',
+        text: typeof err === 'object' ? (err.message || JSON.stringify(err)) : String(err)
+    }))];
+}
+
+// Render all messages
+const allMessages = [
+    ...messages.errors,
+    ...messages.success,
+    ...messages.infos
+];
+
+allMessages.forEach(message => { %>
+    <div class="alert alert-<%= message.type %> alert-dismissible fade show" role="alert">
+        <i class="fas fa-<%= message.icon %> me-2"></i>
+        <%= message.text %>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+<% }); %>
+                <%= typeof msg === 'object' ? JSON.stringify(msg) : msg %>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        <% } %>
+    <% }); %>
+<% } %>
