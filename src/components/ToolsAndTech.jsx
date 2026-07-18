@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { FaReact, FaNodeJs, FaGithub, FaDocker, FaCogs, FaDatabase, FaServer, FaTerminal, FaCode } from "react-icons/fa";
+import { FaReact, FaNodeJs, FaGithub, FaDocker, FaCogs, FaDatabase, FaServer, FaTerminal, FaCode, FaBrain } from "react-icons/fa";
 import { SiTailwindcss, SiExpress, SiMongodb, SiPostman, SiTypescript, SiRedux, SiNextdotjs } from "react-icons/si";
 import * as Fa from 'react-icons/fa';
 import * as Si from 'react-icons/si';
@@ -26,7 +26,7 @@ const ToolsTech = () => {
     { name: "Docker", icon: <FaDocker />, category: 'DevOps' },
     { name: "GitHub", icon: <FaGithub />, category: 'Tools' },
     { name: "Postman", icon: <SiPostman />, category: 'Tools' },
-    { name: "OpenAI", icon: <SiOpenai />, category: 'AI' },
+    { name: "OpenAI", icon: <FaBrain />, category: 'AI' },
   ];
 
   const [items, setItems] = useState(null);
