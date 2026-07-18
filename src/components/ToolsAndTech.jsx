@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { FaReact, FaNodeJs, FaGithub, FaDocker, FaCogs, FaDatabase, FaServer, FaTerminal, FaCode } from "react-icons/fa";
-import { SiTailwindcss, SiExpress, SiMongodb, SiPostman, SiOpenai, SiTypescript, SiRedux, SiNextdotjs } from "react-icons/si";
+import { SiTailwindcss, SiExpress, SiMongodb, SiPostman, SiTypescript, SiRedux, SiNextdotjs } from "react-icons/si";
 import * as Fa from 'react-icons/fa';
 import * as Si from 'react-icons/si';
 import * as Io5 from 'react-icons/io5';
